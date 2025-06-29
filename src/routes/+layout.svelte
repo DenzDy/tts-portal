@@ -1,9 +1,9 @@
 <script lang="ts">
-	import '../../app.css';
-
+	import '../app.css';
+    import { Menu } from '@lucide/svelte';
 	let { children } = $props();
 </script>
-<nav>
-    
-</nav>
+<button>
+    <Menu/>
+</button>
 {@render children()}
