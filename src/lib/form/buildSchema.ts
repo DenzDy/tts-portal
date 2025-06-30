@@ -4,7 +4,8 @@ import { UploadFileTypes, fileSizeLimit, fileSizeLimitText } from "./formTypes";
 
 export function buildZodField(def: FormFields): ZodType {
     let schema: ZodType;
-    let errorMessage: string = def['Custom Error Message'] || "Invalid format";
+    let errorMessage: string = def?.['Custom Error Message'] || "Invalid format";
+    let options: string[] = def.Options?.split("; ").map(opt => opt.trim()).filter(Boolean) ?? [];
 
     switch (def.Type?.toLowerCase()) {
         case 'text':
@@ -50,23 +51,61 @@ export function buildZodField(def: FormFields): ZodType {
 			break;
 
         case 'checkbox':
-            // TO EDIT
-            schema = z.any();
-            break;
-            
-        case 'radio':
-            // TO EDIT
-            schema = z.any();
-            break;
+			if (options.length > 0) {
+                // Add "None" option
+                options.push("None");
+
+				// Multi-select checkboxes => array of strings
+				schema = z.array(z.enum(options as [string, ...string[]])).min(1, {
+					message: "At least one option must be checked"
+				});
+			} else {
+				// Single true/false checkbox
+				schema = z.union([z.literal("on"), z.literal(true), z.literal(false)])
+					.transform(val => val === "on" || val === true);
+			}
+
+			break;
+
+		case 'radio':
+			if (options.length > 0) {
+				schema = z.enum(options as [string, ...string[]], {
+					errorMap: () => ({ message: "Please select an option" })
+				});
+			} else {
+				schema = z.string();
+			}
+
+			break;
         
         case 'select':
-            // TO EDIT
-            schema = z.any();
+            if (options.length > 0) {
+                options.push("None");
+
+                schema = z.enum(options as [string, ...string[]], {
+                    errorMap: () => ({ message: "Please select a valid option" })
+                });
+            } else {
+                schema = z.string();
+            }
+
+            break;
+
+        case 'multiselect':
+            if (options.length > 0) {
+                options.push("None");
+
+                schema = z.array(z.enum(options as [string, ...string[]]), {
+                    message: "At least one option must be selected"
+                })
+            } else {
+                schema = z.string();
+            }
+
             break;
         
         case 'date':
-            // TO EDIT
-            schema = z.any();
+            schema = z.string().datetime().transform(val => new Date(val));
             break;
 
         case 'upload':
@@ -86,7 +125,7 @@ export function buildZodField(def: FormFields): ZodType {
             schema = z.any();
     }
 
-    if (def.Required?.toLowerCase() !== "true") {
+    if (def?.Required?.toLowerCase() !== "true") {
         schema = schema.optional();
     }
 
