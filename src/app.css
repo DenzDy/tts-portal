@@ -46,3 +46,10 @@
 .text-green{
     color: var(--color-green);
 }
+
+@font-face {
+    font-family: 'Garet';
+    font-style: normal;
+    font-weight: 400;
+    src: url("src/lib/static/fonts/Garet-Book.ttf");
+}
