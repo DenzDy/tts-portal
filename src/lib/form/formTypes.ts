@@ -4,10 +4,10 @@ export interface FormFields {
     "Section Order"?: string;
     Module?: string;
     View?: string;
-    Label?: string;
+    Label: string;
     Placeholder?: string;
     Helper?: string;
-    Type: "text" | "textarea" | "email" | "number" | "checkbox" | "radio" | "select" | "date" | "upload";
+    Type: "text" | "textarea" | "email" | "number" | "checkbox" | "radio" | "select" | "date" | "multiselect" | "upload";
     Options?: string;
     "Max Length"?: string;
     "Min Value"?: string;
@@ -15,6 +15,7 @@ export interface FormFields {
     Regex?: string;
     Validation?: string;
     "Custom Error Message"? : string;
+    "Price Dictionary"? : string;
     Required?: 'true' | 'false';
 }
 

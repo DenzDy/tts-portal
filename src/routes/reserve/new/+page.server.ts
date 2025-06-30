@@ -4,7 +4,8 @@ import { loadFormFieldsFromSheet } from '$lib/form/getFields';
 
 export async function load({ fetch }) {
     // Get a record of header name, value of cell for each form field
-    const fields = await loadFormFieldsFromSheet("Reservation Form", fetch);
+    const fields = await loadFormFieldsFromSheet("Reservation Form", fetch);    
+    // console.log(fields);
 
     const schemaShape = Object.fromEntries(
         fields.map(def => [def.Name, buildZodField(def)])
@@ -12,7 +13,6 @@ export async function load({ fetch }) {
 
     const formSchema = z.object(schemaShape);
     // console.log(schemaShape);
-    // console.log(formSchema);
     
     return {
         fields
