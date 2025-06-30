@@ -3,7 +3,7 @@
     import ZoneCard from '$lib/components/zone-card/ZoneCard.svelte';
 </script>
 
-<div class="bg-[url($lib/static/images/hero.png)] bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10">
+<div class="snap-start bg-[url($lib/static/images/hero.png)] bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10">
     <img id='hero-image' src="src/lib/static/images/mobile-logo.png" alt="The Third Space Logo" class="w-[500px] h-[300px] object-cover">
     <p id="hero-text" class="font-[Montserrat] font-medium text-black w-full text-wrap p-5 text-center ">
         a place where people spend their time between their first place (home) and second place (work or school)
@@ -15,21 +15,24 @@
         <div class="bg-green w-full h-[20px]"></div>
     </div>
 </div>
-<div id="about-us" class="w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
+<div id="about-us" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">about the third space.</h1>
     <img src="src/lib/static/images/newspaper-tts.png" alt="" srcset="" class="w-[80%]">
     <p class="text-center font-[Garet] text-xs/6 font-bold text-black mb-3">The Third Space is a holistic, air-conditioned co-working space where students of the University of the Philippines can study for examinations or research, mingle with friends, collaborate with peers, and participate in various wellness initiatives. It aims to improve the overall well-being of students through activities that will restore their appreciation for discovert, collaborative learning, and community-building.</p>
+    
+</div>
+<div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">the three zones.</h1>
     <ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
     <ZoneCard zoneName="blue" zoneColor="blue" zoneDescription="reading, research, and study space."/>
     <ZoneCard zoneName="green" zoneColor="green" zoneDescription="reading, research, and study space."/>
 </div>
-<div id="recent-events" class="w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
+<div id="recent-events" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">recent events.</h1>
 
 
 </div>
-<div id="contact-us" class="w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
+<div id="contact-us" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">contact us.</h1>
     <div class="flex flex-row">
         <div class="flex flex-col gap-3 mb-5">

@@ -15,6 +15,6 @@
         <Menu size={32} strokeWidth={3} class=""/>
     </button>
 </nav>
-<main class="bg-primary h-[calc(100vh-56px)] overflow-scroll">
+<main class="bg-primary h-[calc(100vh-56px)] overflow-y overflow-auto snap-y snap-mandatory">
     {@render children()}
 </main>
