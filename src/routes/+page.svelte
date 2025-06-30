@@ -1,6 +1,13 @@
 <script lang="ts">
     import { ChevronDown, MapPin } from '@lucide/svelte';
     import ZoneCard from '$lib/components/zone-card/ZoneCard.svelte';
+    import Carousel from 'svelte-carousel';
+    import { browser } from '$app/environment';
+    import EventCard from '$lib/components/event-card/EventCard.svelte';
+    let carousel;
+    const handleNextClick = () => {
+        carousel.goToNext();
+    }
 </script>
 
 <div class="snap-start bg-[url($lib/static/images/hero.png)] bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10">
@@ -29,7 +36,14 @@
 </div>
 <div id="recent-events" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">recent events.</h1>
+    {#if browser}
+        <Carousel bind:this={carousel}>
+            <EventCard image="src/lib/static/images/anniv.png" headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
+            <EventCard image="src/lib/static/images/anniv.png" headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
+            <EventCard image="src/lib/static/images/anniv.png" headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
 
+        </Carousel>
+    {/if}
 
 </div>
 <div id="contact-us" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">

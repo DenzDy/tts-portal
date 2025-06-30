@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-
+@plugin 'flowbite/plugin';
 :root{
     --color-primary: #494646;
     --color-muted:#ACACAC;
