@@ -51,5 +51,5 @@
     font-family: 'Garet';
     font-style: normal;
     font-weight: 400;
-    src: url("/fonts/Garet-Book.ttf");
+    src: url("$lib/static/fonts/Garet-Book.ttf");
 }
