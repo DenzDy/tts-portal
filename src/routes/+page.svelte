@@ -45,7 +45,6 @@
             <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
             <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
             <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
-
         </Carousel>
     {/if}
 
