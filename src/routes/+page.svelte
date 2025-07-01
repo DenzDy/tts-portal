@@ -1,5 +1,6 @@
 <script lang="ts">
     import { ChevronDown, MapPin } from '@lucide/svelte';
+    import { onMount } from 'svelte';
     import ZoneCard from '$lib/components/zone-card/ZoneCard.svelte';
     import Carousel from 'svelte-carousel';
     import { browser } from '$app/environment';
@@ -14,6 +15,16 @@
     const handleNextClick = () => {
         carousel.goToNext();
     }
+
+    let windowWidth = 0;
+    onMount(() => {
+		windowWidth = window.innerWidth;
+		window.addEventListener('resize', () => {
+			windowWidth = window.innerWidth;
+		});
+	});
+
+	$: isDesktop = windowWidth > 640 ? 3 : 1;
 </script>
 
 <div class="snap-start bg-hero bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10 sm:bg-none!">
@@ -43,7 +54,7 @@
 </div>
 <div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3 sm:px-8 sm:items-start">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary sm:text-[4rem] font-semibold">the three zones.</h1>
-    <div class="flex flex-col items-center gap-7 sm:flex sm:flex-row sm:w-full sm:justify-center sm:gap-16">
+    <div class="flex flex-col items-center gap-7 sm:flex sm:flex-row sm:w-full sm:justify-center sm:items-start sm:gap-16">
         <ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
         <ZoneCard zoneName="blue" zoneColor="blue" zoneDescription="interaction of peers and friends — mindful conversations and discussions"/>
         <ZoneCard zoneName="green" zoneColor="green" zoneDescription="different wellness activities and learning opportunities"/>    
@@ -53,7 +64,7 @@
 <div id="recent-events" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">recent events.</h1>
     {#if browser}
-        <Carousel bind:this={carousel}>
+        <Carousel bind:this={carousel} particlesToShow={isDesktop}>
             <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
             <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
             <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
