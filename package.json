@@ -57,7 +57,7 @@
 		"lucide": "^0.525.0",
 		"lucide-svelte": "^0.525.0",
 		"postgres": "^3.4.5",
-		"svelte-carousel": "^1.0.25"
+		"svelte-carousel": "^1.0.25",
 		"zod": "^3.25.67"
 	}
 }
