@@ -7,6 +7,8 @@
     import hero from '$lib/static/images/hero.png';
     import anniv from '$lib/static/images/anniv.png';
     import mobileLogo from '$lib/static/images/mobile-logo.png';
+    import desktopLogo from '$lib/static/images/desktop-logo.png';
+    import desktopHero from '$lib/static/images/hero-unedited.png';
     import newspaperTTS from '$lib/static/images/newspaper-tts.png';
     let carousel;
     const handleNextClick = () => {
@@ -14,29 +16,39 @@
     }
 </script>
 
-<div style="background-image: url({hero})"class="snap-start bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10">
-    <img id='hero-image' src={mobileLogo} alt="The Third Space Logo" class="w-[500px] h-[300px] object-cover">
-    <p id="hero-text" class="font-[Montserrat] font-medium text-black w-full text-wrap p-5 text-center ">
-        a place where people spend their time between their first place (home) and second place (work or school)
-    </p>
-    <ChevronDown/>
+<div class="snap-start bg-hero bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10 sm:bg-none!">
+    <div class="sm:flex sm:flex-row sm:items-center sm:w-full sm:px-10 sm:gap-10">
+        <img id="hero-image-large" src={desktopLogo} alt="The Third Space Logo" srcset="" class="hidden sm:block sm:w-[45%] max-w-[600px]">
+        <img id='hero-image-small' src={mobileLogo} alt="The Third Space Logo" class="w-[500px] h-[300px] object-cover sm:hidden">
+        <p id="hero-text" class="font-[Montserrat] font-medium text-black w-full text-wrap p-5 text-xl text-center sm:text-start ">
+            a place where people spend their time between their first place (home) and second place (work or school)
+        </p>
+    </div>
+    <ChevronDown class="sm:hidden"/>
+    <div class="bg-hero-desktop w-[95%] min-h-[400px] grow-3 my-4 rounded-xl bg-center"></div>
     <div id="stripes" class="w-full">
         <div class="bg-blue w-full h-[20px]"></div>
         <div class="bg-orange w-full h-[20px]"></div>
         <div class="bg-green w-full h-[20px]"></div>
     </div>
 </div>
-<div id="about-us" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
-    <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">about the third space.</h1>
-    <img src={newspaperTTS} alt="" srcset="" class="w-[80%]">
-    <p class="text-center font-[Garet] text-xs/6 font-bold text-black mb-3">The Third Space is a holistic, air-conditioned co-working space where students of the University of the Philippines can study for examinations or research, mingle with friends, collaborate with peers, and participate in various wellness initiatives. It aims to improve the overall well-being of students through activities that will restore their appreciation for discovert, collaborative learning, and community-building.</p>
-    
+<div id="about-us" class="snap-start w-full mt-8 pt-3 flex mb-10 flex-col sm:flex sm:flex-row items-center gap-7 px-3 sm:gap-16">
+    <h1 class="font-[League_Spartan] sm:hidden text-[3rem]/10 text-center text-primary font-semibold">about the third space.</h1>
+    <img src={newspaperTTS} alt="" srcset="" class="w-[80%] sm:w-[40%]">
+    <p class="text-center font-[Garet] text-xs/6 font-bold text-black sm:hidden mb-3">The Third Space is a holistic, air-conditioned co-working space where students of the University of the Philippines can study for examinations or research, mingle with friends, collaborate with peers, and participate in various wellness initiatives. It aims to improve the overall well-being of students through activities that will restore their appreciation for discovert, collaborative learning, and community-building.</p>
+    <div class="hidden sm:flex sm:flex-col sm:gap-16 w-[50%]">
+        <h1 class="font-[League_Spartan] text-[3rem]/10 text-primary font-semibold sm:text-[4rem]">about the third space.</h1>
+        <p class="text-center font-[Garet] text-xs/6 sm:text-xl/12 sm:text-start font-bold text-black mb-3">The Third Space is a holistic, air-conditioned co-working space where students of the University of the Philippines can study for examinations or research, mingle with friends, collaborate with peers, and participate in various wellness initiatives. It aims to improve the overall well-being of students through activities that will restore their appreciation for discovert, collaborative learning, and community-building.</p>
+    </div>
 </div>
-<div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
-    <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">the three zones.</h1>
-    <ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
-    <ZoneCard zoneName="blue" zoneColor="blue" zoneDescription="interaction of peers and friends — mindful conversations and discussions"/>
-    <ZoneCard zoneName="green" zoneColor="green" zoneDescription="different wellness activities and learning opportunities"/>
+<div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3 sm:px-8 sm:items-start">
+    <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary sm:text-[4rem] font-semibold">the three zones.</h1>
+    <div class="flex flex-col items-center gap-7 sm:flex sm:flex-row sm:w-full sm:justify-center sm:gap-16">
+        <ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
+        <ZoneCard zoneName="blue" zoneColor="blue" zoneDescription="interaction of peers and friends — mindful conversations and discussions"/>
+        <ZoneCard zoneName="green" zoneColor="green" zoneDescription="different wellness activities and learning opportunities"/>    
+    </div>
+    
 </div>
 <div id="recent-events" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">recent events.</h1>
