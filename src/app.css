@@ -1,3 +1,55 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+@plugin 'flowbite/plugin';
+:root{
+    --color-primary: #494646;
+    --color-muted:#ACACAC;
+    --color-orange: #F9943B;
+    --color-green: #9DCD5A;
+    --color-blue: #69ADC6;
+    --color-background: #F8F9F0;
+}
+
+.bg-primary{
+    background-color: var(--color-background);
+}
+
+.bg-orange{
+    background-color: var(--color-orange);
+}
+
+.bg-blue{
+    background-color: var(--color-blue);
+}
+
+.bg-green{
+    background-color: var(--color-green);
+}
+
+.text-primary{
+    color: var(--color-primary);
+}
+
+.text-muted{
+    color: var(--color-muted);
+}
+
+.text-orange{
+    color: var(--color-orange);
+}
+
+.text-blue{
+    color: var(--color-blue);
+}
+
+.text-green{
+    color: var(--color-green);
+}
+
+@font-face {
+    font-family: 'Garet';
+    font-style: normal;
+    font-weight: 400;
+    src: url("$lib/static/fonts/Garet-Book.ttf");
+}
