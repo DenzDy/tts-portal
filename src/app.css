@@ -53,3 +53,11 @@
     font-weight: 400;
     src: url("$lib/static/fonts/Garet-Book.ttf");
 }
+
+.bg-hero {
+    background-image: url(/src/lib/static/images/hero.png);
+}
+
+.bg-hero-desktop {
+    background-image: url(/src/lib/static/images/hero-unedited.png);
+}
