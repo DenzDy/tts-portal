@@ -1,20 +1,13 @@
-import { z } from "zod";
-import { buildZodField } from '$lib/form/buildSchema';
-import { loadFormFieldsFromSheet } from '$lib/form/getFields';
+import { getReservationSchema } from "$lib/form/reservationSchema.js";
+// import { superValidate } from "sveltekit-superforms/server";
 
-export async function load({ fetch }) {
-    // Get a record of header name, value of cell for each form field
-    const fields = await loadFormFieldsFromSheet("Reservation Form", fetch);    
-    // console.log(fields);
-
-    const schemaShape = Object.fromEntries(
-        fields.map(def => [def.Name, buildZodField(def)])
-    );
-
-    const formSchema = z.object(schemaShape);
-    // console.log(schemaShape);
+export async function load(event) {
+	const { schema, reservationFields } = await getReservationSchema(event.fetch);
     
-    return {
-        fields
-    };
+    // const form = await superValidate(schema);
+
+	return {
+        // form,
+		reservationFields,
+	};
 }
