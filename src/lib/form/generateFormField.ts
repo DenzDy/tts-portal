@@ -1,5 +1,6 @@
 import type { FormFields } from "./formTypes";
 import TextField from "$lib/components/form/TextField.svelte";
+import TextAreaField from '$lib/components/form/TextAreaField.svelte';
 
 export function generateFormFields(def: FormFields) {
     let component = TextField;
@@ -12,11 +13,12 @@ export function generateFormFields(def: FormFields) {
 
     switch (def?.Type.toLowerCase()) {
         case "text":
-        case "textarea":
         case "email":
         case "number":
             break;
-
+        case "textarea":
+            component = TextAreaField;
+            break;        
         default:
             // Defaults to TextField
             break;

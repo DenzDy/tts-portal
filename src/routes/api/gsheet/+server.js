@@ -15,7 +15,7 @@ if (!spreadsheetId) {
 
 async function getSheetsClient() {
 	const auth = new google.auth.GoogleAuth({
-		credentials: JSON.parse(rawCredentials),
+		credentials: JSON.parse(Buffer.from(rawCredentials, 'base64').toString('utf-8')), // testing stuff again maybe revert later
 		scopes: ['https://www.googleapis.com/auth/spreadsheets']
 	});
 	return google.sheets({ version: 'v4', auth });
@@ -38,13 +38,13 @@ export async function POST({ request }) {
 }
 
 export async function GET({ url }) {
-	const targetTab = url.searchParams.get('tab') || 'Sheet1';
+	const targetTab = 'Form Fields'; // Match your sheet tab name exactly (for testing purposes yo)
     const safeTab = targetTab.replace(/'/g, ''); // remove extra quotes
 	const sheets = await getSheetsClient();
 
 	const res = await sheets.spreadsheets.values.get({
 		spreadsheetId,
-		range: `'${safeTab}'!A1:Z1000`
+		range: `'${targetTab}'!A1:Z1000` // i changed this dude for testing purposes too
 	});
 
 	return json(res.data.values || []);
