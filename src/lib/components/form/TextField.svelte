@@ -40,6 +40,12 @@
         input.value = input.value.replace(/[^\d.-]/g, '');
         value = input.value;
     }
+
+    function trimValue(event: Event) {
+        const input = event.target as HTMLInputElement;
+        input.value = input.value.trim();
+        value = input.value;
+    }
 </script>
 
 <div class={cn("font-[Garet]", divClasses ?? [])}>
@@ -66,7 +72,10 @@
         bind:value={value}
         autocomplete="off"
         on:keydown={restrictNonNumericInput}
-		on:input={filterPastedInput}
+		on:input={(e) => {
+            filterPastedInput(e);
+            trimValue(e);
+        }}
     />
     {#if errors.length > 0}
         <p class={cn("text-wrap", errorClasses ?? [])}>
