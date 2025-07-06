@@ -58,7 +58,7 @@
     {/if}
 
     {#each options as option}
-        <label class={cn("flex items-center gap-2", inputClasses, values.includes(noneValue) && option !== noneValue ? "text-gray-400" : "")}>
+        <label class={cn("flex items-center gap-2", inputClasses ?? [], values.includes(noneValue) && option !== noneValue ? "text-gray-400" : "")}>
             <input
                 type="checkbox"
                 bind:group={values}
