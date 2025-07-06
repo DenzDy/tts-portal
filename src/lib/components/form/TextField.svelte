@@ -13,6 +13,7 @@
     export let isRequired: boolean = false;
     export let divClasses: ClassValue[] = [];
     export let labelClasses: ClassValue[] = [];
+    export let helperClasses: ClassValue[] = [];
     export let inputClasses: ClassValue[] = [];
     export let errorClasses: ClassValue[] = [];
 
@@ -47,12 +48,14 @@
     >
         {label}
     </label>
-        <p>{helper}</p>
+    
+    <p class={cn("font-[Garet]", helperClasses)}>{helper}</p>
+    
     <input 
         type={type}
         id={name}
         name={name}
-        class={cn(inputClasses)}
+        class={cn("font-[Garet]", inputClasses)}
         placeholder={placeholder}
         pattern={regex}
         required={isRequired}
