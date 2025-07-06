@@ -5,7 +5,7 @@
     export let name: string;
     export let label: string;
     export let type: string = "text";
-    export let value: string;
+    export let value: string = "";
     export let placeholder: string = "";
     export let helper: string = "";
     export let regex: string = '';
@@ -13,6 +13,7 @@
     export let isRequired: boolean = false;
     export let divClasses: ClassValue[] = [];
     export let labelClasses: ClassValue[] = [];
+    export let helperClasses: ClassValue[] = [];
     export let inputClasses: ClassValue[] = [];
     export let errorClasses: ClassValue[] = [];
 
@@ -39,20 +40,31 @@
         input.value = input.value.replace(/[^\d.-]/g, '');
         value = input.value;
     }
+
+    function trimValue(event: Event) {
+        const input = event.target as HTMLInputElement;
+        input.value = input.value.trim();
+        value = input.value;
+    }
 </script>
 
-<div class={cn("font-[Garet]", divClasses)}>
+<div class={cn("font-[Garet]", divClasses ?? [])}>
     <label for={name}
-        class={cn(labelClasses)}
+        class={cn("text-wrap", labelClasses ?? [])}
     >
         {label}
     </label>
-        <p>{helper}</p>
+
+    <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{helper}</p>
+    
     <input 
         type={type}
         id={name}
         name={name}
-        class={cn(inputClasses)}
+        class={cn(
+            "font-[Garet]", "w-5/6", "lg:w-4xl",
+            inputClasses ?? []
+        )}
         placeholder={placeholder}
         pattern={regex}
         required={isRequired}
@@ -60,10 +72,13 @@
         bind:value={value}
         autocomplete="off"
         on:keydown={restrictNonNumericInput}
-		on:input={filterPastedInput}
+		on:input={(e) => {
+            filterPastedInput(e);
+            trimValue(e);
+        }}
     />
     {#if errors.length > 0}
-        <p class={cn(errorClasses)}>
+        <p class={cn("text-wrap", errorClasses ?? [])}>
             {errors[0]}
         </p>
     {/if}
