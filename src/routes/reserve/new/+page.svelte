@@ -4,10 +4,18 @@
 
     export let data;
 
+    let classes = {
+        "divClasses": [],
+        "labelClasses": ["font-bold", "text-md"],
+        "helperClasses": ["text-gray-500", "italic", "text-sm"],
+        "inputClasses": ["mt-3", "mb-5", "rounded-md", "border-blue"],
+        "errorClasses": []
+    }
+
     let renderedFields = data?.reservationFields?.map(def => {
         return {
             name: def?.Name,
-            ...generateFormFields(def)
+            ...generateFormFields(def, classes),
         }
     })
 

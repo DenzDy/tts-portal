@@ -42,20 +42,23 @@
     }
 </script>
 
-<div class={cn("font-[Garet]", divClasses)}>
+<div class={cn("font-[Garet]", divClasses ?? [])}>
     <label for={name}
-        class={cn(labelClasses)}
+        class={cn("text-wrap", labelClasses ?? [])}
     >
         {label}
     </label>
-    
-    <p class={cn("font-[Garet]", helperClasses)}>{helper}</p>
+
+    <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{helper}</p>
     
     <input 
         type={type}
         id={name}
         name={name}
-        class={cn("font-[Garet]", inputClasses)}
+        class={cn(
+            "font-[Garet]", "w-5/6", "lg:w-4xl",
+            inputClasses ?? []
+        )}
         placeholder={placeholder}
         pattern={regex}
         required={isRequired}
@@ -66,7 +69,7 @@
 		on:input={filterPastedInput}
     />
     {#if errors.length > 0}
-        <p class={cn(errorClasses)}>
+        <p class={cn("text-wrap", errorClasses ?? [])}>
             {errors[0]}
         </p>
     {/if}

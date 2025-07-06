@@ -1,15 +1,14 @@
 import type { FormFields } from "./formTypes";
 import TextField from "$lib/components/form/TextField.svelte";
 import TextAreaField from '$lib/components/form/TextAreaField.svelte';
+import type { ClassValue } from "clsx";
 
-export function generateFormFields(def: FormFields) {
+export function generateFormFields(def: FormFields, classes: Record<string, ClassValue[]> = {}) {
     let component = TextField;
 
     let formField = {
         ...def
     }
-
-    console.log(formField);
 
     switch (def?.Type.toLowerCase()) {
         case "text":
@@ -34,7 +33,8 @@ export function generateFormFields(def: FormFields) {
             helper: def?.Helper,
             required: def?.Required?.toLowerCase() === "true",
             options: def.Options?.split('; ').map((opt) => opt.trim()),
-            ...formField
+            ...formField,
+            ...classes,
         }
     }
 }

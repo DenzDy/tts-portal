@@ -16,14 +16,14 @@
     export let errorClasses: ClassValue[] = [];
 </script>
 
-<div class={cn("font-[Garet]", divClasses)}>
+<div class={cn("font-[Garet]", divClasses ?? [])}>
     {#if label}
-        <label for={name} class={cn(labelClasses)}>
+        <label for={name} class={cn("text-wrap", labelClasses ?? [])}>
             {label}
         </label>
     {/if}
 
-    <p class={cn("font-[Garet]", helperClasses)}>{helper}</p>
+    <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{helper}</p>
 
     <textarea
         id={name}
@@ -31,8 +31,8 @@
         bind:value={value}
         placeholder={placeholder}
         class={cn(
-            "w-5/6", "lg:w-4xl", "h-50",
-            inputClasses
+            "w-5/6", "lg:w-4xl", "h-50", "text-wrap",
+            inputClasses ?? []
         )}
         required={isRequired}
         aria-invalid={errors.length > 0}
@@ -40,11 +40,8 @@
     ></textarea>
 
     {#if errors.length > 0}
-        <p class={cn(errorClasses)}>
+        <p class={cn("text-wrap", errorClasses ?? [])}>
             {errors[0]}
         </p>
     {/if}
 </div>
-
-<style>
-</style>
