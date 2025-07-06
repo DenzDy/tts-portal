@@ -18,8 +18,6 @@
 	export let inputClasses: ClassValue[] = [];
 	export let errorClasses: ClassValue[] = [];
 
-	const noneValue = "None";
-
 	function handleChange(event: Event) {
 		const selected = (event.target as HTMLSelectElement).value;
 		value = selected;
