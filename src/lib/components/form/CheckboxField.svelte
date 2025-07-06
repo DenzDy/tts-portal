@@ -46,13 +46,15 @@
 	}
 </script>
 
-<div class={cn("font-[Garet]", divClasses)}>
+<div class={cn("font-[Garet]", divClasses ?? [])}>
     {#if label}
-        <label for={name} class={cn(labelClasses)}>{label}{isRequired ? "*" : ""}</label>
+        <label for={name} class={cn("text-wrap", labelClasses ?? [])}>
+            {label}{isRequired ? "*" : ""}
+        </label>
     {/if}
 
     {#if helper}
-        <p class={cn(helperClasses)}>{helper}</p>
+        <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{helper}</p>
     {/if}
 
     {#each options as option}

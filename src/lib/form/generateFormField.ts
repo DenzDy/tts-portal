@@ -2,6 +2,7 @@ import type { FormFields } from "./formTypes";
 import TextField from "$lib/components/form/TextField.svelte";
 import TextAreaField from '$lib/components/form/TextAreaField.svelte';
 import CheckboxField from "$lib/components/form/CheckboxField.svelte";
+import SelectField from "$lib/components/form/SelectField.svelte";
 import type { ClassValue } from "clsx";
 
 export function generateFormFields(def: FormFields, classes: Record<string, ClassValue[]> = {}) {
@@ -21,6 +22,10 @@ export function generateFormFields(def: FormFields, classes: Record<string, Clas
             break;
         case "checkbox":
             component = CheckboxField;
+            break;
+        case "select":
+            component = SelectField;
+            break;
         default:
             // Defaults to TextField
             break;
