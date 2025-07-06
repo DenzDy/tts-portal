@@ -5,7 +5,7 @@
     export let name: string;
     export let label: string;
     export let type: string = "text";
-    export let value: string;
+    export let value: string = "";
     export let placeholder: string = "";
     export let helper: string = "";
     export let regex: string = '';
