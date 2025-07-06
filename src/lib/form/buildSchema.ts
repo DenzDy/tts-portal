@@ -105,7 +105,8 @@ export function buildZodField(def: FormFields): ZodType {
             break;
         
         case 'date':
-            schema = z.string().datetime().transform(val => new Date(val));
+            // change back to datetime later
+            schema = z.string().date().transform(val => new Date(val));
             break;
 
         case 'upload':

@@ -28,13 +28,15 @@
 <!-- <form use:form> -->
     <!-- Put dynamic fields in here -->
 <!-- </form> -->
-
-{#each renderedFields as field (field.name)}
-	<svelte:component
-		this={field.component}
-		{...field.props}
-		bind:value={formData[field.name]}
+<form method="POST">
+    {#each renderedFields as field (field.name)}
+        <svelte:component
+            this={field.component}
+            {...field.props}
+            bind:value={formData[field.name]}
         />
-        <!-- Replace bind with below if superform is implemented -->
-        <!-- bind:value={form[def.Name]} -->
-{/each}
+            <!-- Replace bind with below if superform is implemented -->
+            <!-- bind:value={form[def.Name]} -->
+    {/each}
+    <button type="submit">Submit</button>
+</form>
