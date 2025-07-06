@@ -85,6 +85,8 @@
     {/if}
 
     {#if errors.length > 0}
-        <p class={cn(errorClasses)}>{errors[0]}</p>
+        <p class={cn("text-wrap", errorClasses ?? [])}>
+            {errors[0]}
+        </p>
     {/if}
 </div>
