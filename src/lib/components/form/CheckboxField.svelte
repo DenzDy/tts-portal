@@ -10,7 +10,7 @@
     export let othersText: string = ""; // for "Others"
     export let helper: string = "";
     export let options: string[] = [];
-    export let errors: string[] = [];
+    export let errors: string[] | { _errors: string[] } = [];
     export let isRequired: boolean = false;
     export let divClasses: ClassValue[] = [];
     export let labelClasses: ClassValue[] = [];
@@ -86,9 +86,13 @@
         />
     {/if}
 
-    {#if errors.length > 0}
+    {#if Array.isArray(errors) && errors.length > 0}
         <p class={cn("text-wrap", errorClasses ?? [])}>
             {errors[0]}
+        </p>
+    {:else if typeof errors === 'object' && errors !== null && '_errors' in errors && errors._errors.length > 0}
+        <p class={cn("text-wrap", errorClasses ?? [])}>
+            {errors._errors[0]}
         </p>
     {/if}
 </div>

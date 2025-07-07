@@ -25,7 +25,7 @@ export function buildZodField(def: FormFields): ZodType {
             break;
         
         case 'email':
-            let emailSchema = z.string().email();
+            let emailSchema = z.string().email({ message: errorMessage || "Invalid email address" });
 
             if (def['Max Length']) {
                 emailSchema = emailSchema.max(Number(def['Max Length']), { "message": "Exceeded character limit" });
@@ -36,44 +36,74 @@ export function buildZodField(def: FormFields): ZodType {
         
         case 'number':
             if (def.Regex) {
-                schema = z.string().regex(new RegExp(def.Regex), { "message": errorMessage }).transform(Number);
+                let numSchema = z.string().regex(new RegExp(def.Regex), { "message": errorMessage });
+
+                if (def?.Required?.toLowerCase() === "true") {
+                    numSchema = (numSchema as z.ZodString).min(1, { "message": "Required" });
+                }
+
+                schema = numSchema.transform(Number);
+                
+                if (def['Min Value']) {
+                    const minVal = Number(def['Min Value']);
+                    schema = (schema as z.ZodNumber).min(minVal, { message: `Number should be minimum ${minVal}` });
+                }
+                if (def['Max Value']) {
+                    const maxVal = Number(def['Max Value']);
+                    schema = (schema as z.ZodNumber).max(maxVal, { message: `Number should be maximum ${maxVal}` });
+                }
                 break;
             }
 
-            schema = z.coerce.number();
+            // If no regex, use z.coerce.number directly
+            schema = z.coerce.number({
+                invalid_type_error: errorMessage || "Must be a number",
+            });
 
-			if (def['Min Value']) {
-                const minVal = Number(def['Min Value'])
+            if (def['Min Value']) {
+                const minVal = Number(def['Min Value']);
                 schema = (schema as z.ZodNumber).min(minVal, { message: `Number should be minimum ${minVal}` });
             }
 
-			if (def['Max Value']) {
-                const maxVal = Number(def['Max Value'])
+            if (def['Max Value']) {
+                const maxVal = Number(def['Max Value']);
                 schema = (schema as z.ZodNumber).max(maxVal, { message: `Number should be maximum ${maxVal}` });
             }
-
-			break;
+            break;
 
         case 'checkbox':
             if (options.length > 0) {
                 const checkboxOptions = [...options];
-
-                // Only add "None" if not already there
                 if (!checkboxOptions.includes("None")) {
                     checkboxOptions.push("None");
                 }
 
-                if (checkboxOptions.length === 0) {
-                    schema = z.array(z.string());
-                } else {
-                    schema = z.array(z.enum(checkboxOptions as [string, ...string[]])).min(1, {
+                let arraySchema = z.array(z.enum(checkboxOptions as [string, ...string[]]));
+
+                // Apply 'min(1)' IF REQUIRED
+                if (def?.Required?.toLowerCase() === "true") {
+                    arraySchema = arraySchema.min(1, {
                         message: "At least one option must be selected"
                     });
                 }
+
+                // apply optional() and default([])
+                schema = arraySchema.optional().default([]);
+
             } else {
-                // Single boolean checkbox (e.g. terms and conditions)
-                schema = z.union([z.literal("on"), z.literal(true), z.literal(false)])
+                // Single boolean checkbox (e.g., terms and conditions)
+                let booleanSchema = z.union([z.literal("on"), z.literal(true), z.literal(false), z.literal("")]).optional()
                     .transform(val => val === "on" || val === true);
+
+                // If required, ensure it's true
+                if (def?.Required?.toLowerCase() === "true") {
+                    schema = (booleanSchema as z.ZodEffects<any, boolean>)
+                        .refine(val => val === true, {
+                            message: "This box must be checked."
+                        });
+                } else {
+                    schema = booleanSchema;
+                }
             }
             break;
 
@@ -105,21 +135,29 @@ export function buildZodField(def: FormFields): ZodType {
                 const msOptions = [...options];
                 if (!msOptions.includes("None")) msOptions.push("None");
 
-                schema = z.array(z.enum(msOptions as [string, ...string[]]), {
-                    message: "At least one option must be selected"
-                });
+                schema = z.array(z.enum(msOptions as [string, ...string[]]));
+                
+                
+                if (def?.Required?.toLowerCase() === "true") {
+                    schema = (schema as z.ZodArray<z.ZodEnum<[string, ...string[]]>>).min(1, {
+                        message: "At least one option must be selected"
+                    });
+                }
             } else {
-                schema = z.array(z.string());
+                schema = z.array(z.string()); // Fallback for no options
+                if (def?.Required?.toLowerCase() === "true") {
+                    schema = (schema as z.ZodArray<z.ZodString>).min(1, {
+                        message: "At least one option must be selected"
+                    });
+                }
             }
             break;
         
         case 'date':
-            schema = z
-                .string()
-                .refine(val => {
-                    return !isNaN(Date.parse(val));
-                }, { message: "Invalid date" })
-                .transform(val => new Date(val));
+            schema = z.coerce.date({
+                required_error: "Date is required.",
+                invalid_type_error: "Invalid date format."
+            });
             break;
 
         case 'upload':
