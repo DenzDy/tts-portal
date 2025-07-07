@@ -63,7 +63,8 @@
                 type="checkbox"
                 bind:group={values}
                 value={option}
-                class="rounded"
+                class="rounded" 
+                name={name}
                 disabled={values.includes(noneValue) && option !== noneValue}
                 on:change={(e) => handleChange(option, (e.target as HTMLInputElement)?.checked)}
             />
@@ -74,6 +75,7 @@
     {#if values.some(isOthersOption)}
         <input
             type="text"
+            name={name}
             bind:value={othersText}
             placeholder={placeholder !== "" ? placeholder : "Please specify..."}
             class={cn(
