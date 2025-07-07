@@ -12,6 +12,10 @@ export function buildZodField(def: FormFields): ZodType {
         case 'textarea':
             schema = z.string();
 
+            if (def?.Required?.toLowerCase() === "true") {
+                schema = schema.min(1, { "message": "Required" });
+            }
+
             if (def['Max Length']) {
                 schema = (schema as z.ZodString).max(Number(def['Max Length']), { "message": "Exceeded character limit" });
             }
@@ -51,62 +55,69 @@ export function buildZodField(def: FormFields): ZodType {
 			break;
 
         case 'checkbox':
-			if (options.length > 0) {
-                // Add "None" option
-                options.push("None");
+            if (options.length > 0) {
+                const checkboxOptions = [...options];
 
-				// Multi-select checkboxes => array of strings
-				schema = z.array(z.enum(options as [string, ...string[]])).min(1, {
-					message: "At least one option must be checked"
-				});
-			} else {
-				// Single true/false checkbox
-				schema = z.union([z.literal("on"), z.literal(true), z.literal(false)])
-					.transform(val => val === "on" || val === true);
-			}
+                // Only add "None" if not already there
+                if (!checkboxOptions.includes("None")) {
+                    checkboxOptions.push("None");
+                }
 
-			break;
+                if (checkboxOptions.length === 0) {
+                    schema = z.array(z.string());
+                } else {
+                    schema = z.array(z.enum(checkboxOptions as [string, ...string[]])).min(1, {
+                        message: "At least one option must be selected"
+                    });
+                }
+            } else {
+                // Single boolean checkbox (e.g. terms and conditions)
+                schema = z.union([z.literal("on"), z.literal(true), z.literal(false)])
+                    .transform(val => val === "on" || val === true);
+            }
+            break;
 
 		case 'radio':
-			if (options.length > 0) {
-				schema = z.enum(options as [string, ...string[]], {
-					errorMap: () => ({ message: "Please select an option" })
-				});
-			} else {
-				schema = z.string();
-			}
-
-			break;
-        
-        case 'select':
             if (options.length > 0) {
-                options.push("None");
-
                 schema = z.enum(options as [string, ...string[]], {
-                    errorMap: () => ({ message: "Please select a valid option" })
+                    errorMap: () => ({ message: "Please select an option" })
                 });
             } else {
                 schema = z.string();
             }
+            break;
+        
+        case 'select':
+            if (options.length > 0) {
+                const selectOptions = [...options];
+                if (!selectOptions.includes("None")) selectOptions.push("None");
 
+                schema = z.enum(selectOptions as [string, ...string[]], {
+                    errorMap: () => ({ message: "Please select an option" })
+                });
+            } else {
+                schema = z.string();
+            }
             break;
 
         case 'multiselect':
             if (options.length > 0) {
-                options.push("None");
+                const msOptions = [...options];
+                if (!msOptions.includes("None")) msOptions.push("None");
 
-                schema = z.array(z.enum(options as [string, ...string[]]), {
+                schema = z.array(z.enum(msOptions as [string, ...string[]]), {
                     message: "At least one option must be selected"
-                })
+                });
             } else {
-                schema = z.string();
+                schema = z.array(z.string()); // fallback
             }
-
             break;
         
         case 'date':
-            // change back to datetime later
-            schema = z.string().date().transform(val => new Date(val));
+            schema = z
+                .string()
+                .refine(val => !val || !isNaN(Date.parse(val)), { message: "Invalid date" })
+                .transform(val => val ? new Date(val) : undefined);
             break;
 
         case 'upload':
@@ -123,7 +134,7 @@ export function buildZodField(def: FormFields): ZodType {
             break;
         
         default:
-            schema = z.any();
+            schema = z.string();
     }
 
     if (def?.Required?.toLowerCase() !== "true") {

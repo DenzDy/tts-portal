@@ -8,7 +8,7 @@
     export let value: string = "";
     export let placeholder: string = "";
     export let helper: string = "";
-    export let regex: string = '';
+    export let regex: string | null = null;
     export let errors: string[] = [];
     export let isRequired: boolean = false;
     export let divClasses: ClassValue[] = [];
