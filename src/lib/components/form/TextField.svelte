@@ -8,7 +8,6 @@
     export let value: string = "";
     export let placeholder: string = "";
     export let helper: string = "";
-    export let regex: string | null = null;
     export let errors: string[] = [];
     export let isRequired: boolean = false;
     export let divClasses: ClassValue[] = [];
@@ -66,7 +65,6 @@
             inputClasses ?? []
         )}
         placeholder={placeholder}
-        pattern={regex}
         required={isRequired}
         aria-invalid={errors.length > 0}
         bind:value={value}

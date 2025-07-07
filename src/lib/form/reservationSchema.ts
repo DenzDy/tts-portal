@@ -24,6 +24,6 @@ export async function getReservationSchema(fetch: typeof globalThis.fetch) {
 
 	return { 
         reservationFields: fields,
-        schema: reservationFormSchema
+        schema: reservationFormSchema,
     };
 }

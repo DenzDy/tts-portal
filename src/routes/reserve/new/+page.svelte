@@ -1,14 +1,21 @@
 <script lang="ts">
     import { generateFormFields } from "$lib/form/generateFormField";
+    import type { SuperValidated, Infer } from 'sveltekit-superforms';
+    import type { AnyZodObject } from 'zod';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { enhance } from '$app/forms';
 
-    export let data;
+    export let data: {
+        form: SuperValidated<Infer<AnyZodObject>>;
+        reservationFields: any[];
+    };
 
     let classes = {
         "divClasses": [],
         "labelClasses": ["font-bold", "text-md"],
         "helperClasses": ["text-gray-500", "italic", "text-sm"],
-        "inputClasses": ["mt-3", "mb-5", "rounded-md", "border-blue"],
-        "errorClasses": []
+        "inputClasses": ["my-2", "rounded-md", "border-blue"],
+        "errorClasses": ["text-red-500", "mb-5"]
     }
 
     let renderedFields = data?.reservationFields?.map(def => {
@@ -18,17 +25,19 @@
         }
     })
 
-    let formData: Record<string, any> = {};
+    const { form, errors } = superForm(data.form);
+
 </script>
 
 <h1>Reservation Form</h1>
 
-<form method="POST">
+<form method="POST" use:enhance>
     {#each renderedFields as field (field.name)}
         <svelte:component
             this={field.component}
             {...field.props}
-            bind:value={formData[field.name]}
+            bind:value={$form[field.name]}
+            errors={$errors[field.name] || []}
         />
     {/each}
     <button type="submit">Submit</button>

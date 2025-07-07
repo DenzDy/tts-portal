@@ -13,7 +13,7 @@ export function buildZodField(def: FormFields): ZodType {
             schema = z.string();
 
             if (def?.Required?.toLowerCase() === "true") {
-                schema = schema.min(1, { "message": "Required" });
+                schema = (schema as z.ZodString).min(1, { "message": "Required" });
             }
 
             if (def['Max Length']) {
@@ -109,15 +109,17 @@ export function buildZodField(def: FormFields): ZodType {
                     message: "At least one option must be selected"
                 });
             } else {
-                schema = z.array(z.string()); // fallback
+                schema = z.array(z.string());
             }
             break;
         
         case 'date':
             schema = z
                 .string()
-                .refine(val => !val || !isNaN(Date.parse(val)), { message: "Invalid date" })
-                .transform(val => val ? new Date(val) : undefined);
+                .refine(val => {
+                    return !isNaN(Date.parse(val));
+                }, { message: "Invalid date" })
+                .transform(val => new Date(val));
             break;
 
         case 'upload':
