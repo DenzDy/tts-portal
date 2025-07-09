@@ -27,6 +27,26 @@
     background-color: var(--color-green);
 }
 
+.border-primary{
+    border-color: var(--color-primary);
+}
+
+.border-muted{
+    border-color: var(--color-muted);
+}
+
+.border-orange{
+    border-color: var(--color-orange);
+}
+
+.border-blue{
+    border-color: var(--color-blue);
+}
+
+.border-green{
+    border-color: var(--color-green);
+}
+
 .text-primary{
     color: var(--color-primary);
 }

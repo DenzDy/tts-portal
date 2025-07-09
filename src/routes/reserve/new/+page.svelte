@@ -1,1 +1,42 @@
+<script lang="ts">
+    import { generateFormFields } from "$lib/form/generateFormField";
+    // import { superForm } from 'sveltekit-superforms/client';
+
+    export let data;
+
+    let classes = {
+        "divClasses": [],
+        "labelClasses": ["font-bold", "text-md"],
+        "helperClasses": ["text-gray-500", "italic", "text-sm"],
+        "inputClasses": ["mt-3", "mb-5", "rounded-md", "border-blue"],
+        "errorClasses": []
+    }
+
+    let renderedFields = data?.reservationFields?.map(def => {
+        return {
+            name: def?.Name,
+            ...generateFormFields(def, classes),
+        }
+    })
+
+    let formData: Record<string, any> = {};
+    // const { form } = superForm(data.form);
+</script>
+
 <h1>Reservation Form</h1>
+
+<!-- <form use:form> -->
+    <!-- Put dynamic fields in here -->
+<!-- </form> -->
+<form method="POST">
+    {#each renderedFields as field (field.name)}
+        <svelte:component
+            this={field.component}
+            {...field.props}
+            bind:value={formData[field.name]}
+        />
+            <!-- Replace bind with below if superform is implemented -->
+            <!-- bind:value={form[def.Name]} -->
+    {/each}
+    <button type="submit">Submit</button>
+</form>
