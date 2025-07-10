@@ -39,6 +39,9 @@
             bind:value={$form[field.name]}
             errors={$errors[field.name] || []}
         />
+        {#if field.name == 'schedEvent'}
+            <iframe src="https://calendar.google.com/calendar/embed?src=7c16b6d1b813168b67088842ec7b78cc29e1559bf69019070face3d5363717ad%40group.calendar.google.com&ctz=Asia%2FManila" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+        {/if}
     {/each}
     <button type="submit">Submit</button>
 </form>
