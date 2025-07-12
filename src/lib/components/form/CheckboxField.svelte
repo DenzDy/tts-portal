@@ -62,11 +62,11 @@
 
         {#if Array.isArray(errors) && errors.length > 0}
             <p class={cn("text-wrap", "inline-block", errorClasses ?? [])}>
-                ({errors[0]})
+                ({errors[0]?.toLowerCase()})
             </p>
         {:else if typeof errors === 'object' && errors !== null && '_errors' in errors && errors._errors.length > 0}
             <p class={cn("text-wrap", "inline-block", errorClasses ?? [])}>
-                ({errors._errors[0]})
+                ({errors._errors[0]?.toLowerCase()})
             </p>
         {/if}
     </div>

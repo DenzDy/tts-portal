@@ -36,7 +36,7 @@
     
         {#if errors.length > 0}
             <p class={cn("text-wrap", errorClasses ?? [])}>
-                ({errors[0]})
+                ({errors[0]?.toLowerCase()})
             </p>
         {/if}
     </div>

@@ -156,7 +156,7 @@ export function buildZodField(def: FormFields): ZodType {
         case 'date':
             schema = z.coerce.date({
                 required_error: "date is required.",
-                invalid_type_error: "invalid date format."
+                invalid_type_error: "invalid date format"
             });
             break;
 
