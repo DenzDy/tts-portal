@@ -26,14 +26,22 @@
 </script>
 
 <div class={cn("font-[Garet]", divClasses ?? [])}>
-	{#if label}
-		<label for={name} class={cn("text-wrap", labelClasses ?? [])}>
-            {label}{isRequired ? "*" : ""
-        }</label>
-	{/if}
+    <div class={cn("text-wrap", labelClasses ?? [])}>
+        {#if label}
+            <label for={name} class={cn("text-wrap")}>
+                {label}{isRequired ? "*" : ""
+            }</label>
+        {/if}
+    
+        {#if errors.length > 0}
+            <p class={cn("text-wrap", errorClasses ?? [])}>
+                ({errors[0]})
+            </p>
+        {/if}
+    </div>
 
 	{#if helper}
-		<p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{helper}</p>
+		<p class={cn("font-[Garet]", "text-wrap", "inline-block", helperClasses ?? [])}>{@html helper}</p>
 	{/if}
 
     <select
@@ -41,7 +49,7 @@
         id={name}
         bind:value={value}
         class={cn(
-            "font-[Garet]", "w-5/6", "lg:w-4xl", "block",
+            "font-[Garet]", "block",
             inputClasses ?? []
         )}
         on:change={handleChange}
@@ -59,16 +67,10 @@
             bind:value={othersText}
             placeholder="Please specify..."
             class={cn(
-                "font-[Garet]", "w-5/6", "lg:w-4xl", "block",
+                "font-[Garet]", "block",
                 inputClasses ?? [],
                 "mt-1"
             )}
         />
     {/if}
-
-	{#if errors.length > 0}
-		<p class={cn("text-wrap", errorClasses ?? [])}>
-            {errors[0]}
-        </p>
-	{/if}
 </div>

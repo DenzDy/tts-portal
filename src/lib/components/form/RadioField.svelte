@@ -26,14 +26,22 @@
 </script>
 
 <div class={cn("font-[Garet]", divClasses ?? [])}>
-	{#if label}
-		<label for={name} class={cn("text-wrap", labelClasses ?? [])}>
-            {label}{isRequired ? "*" : ""}
-        </label>
-	{/if}
+    <div class={cn("text-wrap", labelClasses ?? [])}>
+        {#if label}
+            <label for={name} class={cn("text-wrap")}>
+                {label}{isRequired ? "*" : ""}
+            </label>
+        {/if}
+    
+        {#if errors.length > 0}
+            <p class={cn("text-wrap", "inline-block", errorClasses ?? [])}>
+                ({errors[0]})
+            </p>
+        {/if}
+    </div>
 
 	{#if helper}
-		<p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{helper}</p>
+		<p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{@html helper}</p>
 	{/if}
 
 	{#each options as option}
@@ -56,13 +64,9 @@
 			bind:value={othersText}
 			placeholder="Please specify..."
 			class={cn(
-                "font-[Garet]", "w-5/6", "lg:w-4xl", "mt-1",
+                "font-[Garet]", "mt-1",
                 inputClasses ?? []
             )}
 		/>
-	{/if}
-
-	{#if errors.length > 0}
-		<p class={cn("text-wrap", errorClasses ?? [])}>{errors[0]}</p>
 	{/if}
 </div>

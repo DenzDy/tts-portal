@@ -7,7 +7,7 @@ export interface FormFields {
     Label: string;
     Placeholder?: string;
     Helper?: string;
-    Type: "text" | "textarea" | "email" | "number" | "checkbox" | "radio" | "select" | "date" | "upload" | "select";
+    Type: "text" | "textarea" | "email" | "number" | "checkbox" | "radio" | "select" | "date" | "upload";
     Options?: string;
     "Max Length"?: string;
     "Min Value"?: string;

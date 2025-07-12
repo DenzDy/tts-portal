@@ -23,13 +23,21 @@
 </script>
 
 <div class={cn("font-[Garet]", divClasses ?? [])}>
-    {#if label}
-        <label for={name} class={cn("text-wrap", labelClasses ?? [])}>
-            {label}
-        </label>
-    {/if}
-
-    <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{helper}</p>
+    <div class={cn("text-wrap", labelClasses ?? [])}>
+        {#if label}
+            <label for={name} class={cn("text-wrap")}>
+                {label}
+            </label>
+        {/if}
+    
+        {#if errors.length > 0}
+            <p class={cn("text-wrap", "inline-block", errorClasses ?? [])}>
+                ({errors[0]})
+            </p>
+        {/if}
+    </div>
+        
+    <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{@html helper}</p>
 
     <textarea
         id={name}
@@ -37,7 +45,7 @@
         bind:value={value}
         placeholder={placeholder}
         class={cn(
-            "w-5/6", "lg:w-4xl", "h-50", "text-wrap",
+            "h-50", "text-wrap",
             inputClasses ?? []
         )}
         required={isRequired}
@@ -46,9 +54,4 @@
         on:input={trimValue}
     ></textarea>
 
-    {#if errors.length > 0}
-        <p class={cn("text-wrap", errorClasses ?? [])}>
-            {errors[0]}
-        </p>
-    {/if}
 </div>

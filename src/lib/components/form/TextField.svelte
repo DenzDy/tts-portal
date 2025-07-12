@@ -48,20 +48,28 @@
 </script>
 
 <div class={cn("font-[Garet]", divClasses ?? [])}>
-    <label for={name}
-        class={cn("text-wrap", labelClasses ?? [])}
-    >
-        {label}
-    </label>
+    <div class={cn("text-wrap", labelClasses ?? [])}>
+        <label for={name}
+            class={cn("text-wrap")}
+        >
+            {label}
+        </label>
+    
+        {#if errors.length > 0}
+            <p class={cn("text-wrap", "inline-block", errorClasses ?? [])}>
+               ({errors[0]})
+            </p>
+        {/if}
+    </div>
 
-    <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{helper}</p>
+    <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{@html helper}</p>
     
     <input 
         type={type}
         id={name}
         name={name}
         class={cn(
-            "font-[Garet]", "w-5/6", "lg:w-4xl",
+            "font-[Garet]",
             inputClasses ?? []
         )}
         placeholder={placeholder}
@@ -75,9 +83,4 @@
             trimValue(e);
         }}
     />
-    {#if errors.length > 0}
-        <p class={cn("text-wrap", errorClasses ?? [])}>
-            {errors[0]}
-        </p>
-    {/if}
 </div>

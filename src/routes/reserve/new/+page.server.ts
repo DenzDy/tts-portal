@@ -42,7 +42,7 @@ export const actions = {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                values: [["Pending", 0, new Date(), ...values]],
+                values: [["Pending", -1, new Date(), ...values]],
                 targetTab: env.RESPONSES_TAB || RESPONSES_TAB
             })
         });

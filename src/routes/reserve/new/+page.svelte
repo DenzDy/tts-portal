@@ -11,11 +11,11 @@
     };
 
     let classes = {
-        "divClasses": [],
+        "divClasses": ["my-4"],
         "labelClasses": ["font-bold", "text-md"],
-        "helperClasses": ["text-gray-500", "italic", "text-sm"],
-        "inputClasses": ["my-2", "rounded-md", "border-blue"],
-        "errorClasses": ["text-red-500", "mb-5"]
+        "helperClasses": ["text-gray-500", "italic", "text-sm", "mb-2"],
+        "inputClasses": ["my-1", "rounded-md", "border-blue", "w-full"],
+        "errorClasses": ["text-red-500", "italic", "text-sm"]
     }
 
     let renderedFields = data?.reservationFields?.map(def => {
@@ -31,7 +31,9 @@
 
 <h1>Reservation Form</h1>
 
-<form method="POST" use:enhance>
+<form method="POST" use:enhance
+    class="mx-auto w-5/6 md:w-1/2"
+>
     {#each renderedFields as field (field.name)}
         <svelte:component
             this={field.component}
