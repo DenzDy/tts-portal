@@ -1,16 +1,28 @@
-<!-- src/lib/components/form/Button.svelte -->
 <script lang="ts">
+  import { cn } from "$lib/utils";
+  import type { ClassValue } from "clsx";
   export let type: "button" | "submit" = "button";
   export let variant: "primary" | "outline" | "upload" = "primary";
   export let icon: string | null = null;
+  export let btnClass: ClassValue[] = [];
+  export let href: string | null = null;
 </script>
 
-<button type={type} class={`btn ${variant}`}>
-  {#if icon}
-    <span class="icon">{@html icon}</span>
-  {/if}
-  <slot />
-</button>
+{#if href}
+  <a href={href} class={cn(`btn ${variant}`, btnClass)}>
+    {#if icon}
+      <span class="icon">{@html icon}</span>
+    {/if}
+    <slot />
+  </a>
+{:else}
+  <button type={type} class={cn(`btn ${variant}`, btnClass)}>
+    {#if icon}
+      <span class="icon">{@html icon}</span>
+    {/if}
+    <slot />
+  </button>
+{/if}
 
 <style>
   .btn {
@@ -22,12 +34,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    text-decoration: none;
   }
 
   .primary {
     background-color: #F9943B;
     color: white;
-    border: none;
+    border: 2px solid #F9943B;
   }
 
   .outline {

@@ -9,6 +9,7 @@
     export let placeholder: string = "";
     export let othersText: string = ""; // for "Others"
     export let helper: string = "";
+    export let additionalText: string = "";
     export let options: string[] = [];
     export let errors: string[] | { _errors: string[] } = [];
     export let isRequired: boolean = false;
@@ -108,5 +109,9 @@
             placeholder={placeholder !== "" ? placeholder : "Please specify..."}
             class={cn("font-[Garet]", inputClasses ?? [], "mt-1")}
         />
+    {/if}
+
+    {#if additionalText}
+        <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{@html additionalText}</p>
     {/if}
 </div>

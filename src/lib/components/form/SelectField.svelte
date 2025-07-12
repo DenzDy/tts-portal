@@ -8,6 +8,7 @@
 	export let value: string = "";
 	export let othersText: string = "";
 	export let helper: string = "";
+    export let additionalText: string = "";
 	export let options: string[] = [];
 	export let errors: string[] = [];
 	export let isRequired: boolean = false;
@@ -72,5 +73,9 @@
                 "mt-1"
             )}
         />
+    {/if}
+
+    {#if additionalText}
+        <p class={cn("font-[Garet]", "text-wrap", helperClasses ?? [])}>{@html additionalText}</p>
     {/if}
 </div>
