@@ -43,7 +43,6 @@
         required={isRequired}
         aria-invalid={errors.length > 0}
         autocomplete="off"
-        on:input={trimValue}
     ></textarea>
 
     {#if errors.length > 0}

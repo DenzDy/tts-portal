@@ -72,7 +72,7 @@
         on:keydown={restrictNonNumericInput}
 		on:input={(e) => {
             filterPastedInput(e);
-            trimValue(e);
+            // trimValue(e);
         }}
     />
     {#if errors.length > 0}
