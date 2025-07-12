@@ -4,7 +4,7 @@ import { UploadFileTypes, fileSizeLimit, fileSizeLimitText } from "./formTypes";
 
 export function buildZodField(def: FormFields): ZodType {
     let schema: ZodType;
-    let errorMessage: string = def?.['Custom Error Message'].toLowerCase() || "invalid format";
+    let errorMessage: string = def?.['Custom Error Message']?.toLowerCase() || "invalid format";
     let options: string[] = def.Options?.split("; ").map(opt => opt.trim()).filter(Boolean) ?? [];
 
     switch (def.Type?.toLowerCase()) {
