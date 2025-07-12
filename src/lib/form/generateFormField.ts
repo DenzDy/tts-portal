@@ -43,7 +43,7 @@ export function generateFormFields(def: FormFields, classes: Record<string, Clas
             type: def?.Type,
             placeholder: def?.Placeholder,
             helper: def?.Helper,
-            regex: def?.Regex,
+            additionalText: def?.["Additional Text"],
             required: def?.Required?.toLowerCase() === "true",
             options: def.Options?.split('; ').map((opt) => opt.trim()),
             ...formField,

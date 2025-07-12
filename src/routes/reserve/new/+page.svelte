@@ -1,42 +1,59 @@
 <script lang="ts">
     import { generateFormFields } from "$lib/form/generateFormField";
-    // import { superForm } from 'sveltekit-superforms/client';
+    import type { SuperValidated, Infer } from 'sveltekit-superforms';
+    import type { AnyZodObject } from 'zod';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { enhance } from '$app/forms';
+    import Button from '$lib/components/form/Button.svelte';
 
-    export let data;
+    export let data: {
+        form: SuperValidated<Infer<AnyZodObject>>;
+        reservationFields: any[];
+    };
+
+    const { form, errors } = superForm(data.form);
 
     let classes = {
-        "divClasses": [],
+        "divClasses": ["my-4"],
         "labelClasses": ["font-bold", "text-md"],
-        "helperClasses": ["text-gray-500", "italic", "text-sm"],
-        "inputClasses": ["mt-3", "mb-5", "rounded-md", "border-blue"],
-        "errorClasses": []
+        "helperClasses": ["text-gray-500", "italic", "text-sm", "my-1"],
+        "inputClasses": ["my-2", "rounded-md", "border-blue", "w-full"],
+        "errorClasses": ["text-red-500", "italic", "text-sm"]
     }
 
     let renderedFields = data?.reservationFields?.map(def => {
         return {
             name: def?.Name,
-            ...generateFormFields(def, classes),
+            ...generateFormFields(def, classes)
         }
     })
 
-    let formData: Record<string, any> = {};
-    // const { form } = superForm(data.form);
 </script>
 
-<h1>Reservation Form</h1>
+<div class="mx-auto w-5/6 md:w-1/2 my-8">
+    <h1 class="text-5xl text-center font-bold">
+        Reservation Form
+    </h1>
 
-<!-- <form use:form> -->
-    <!-- Put dynamic fields in here -->
-<!-- </form> -->
-<form method="POST">
-    {#each renderedFields as field (field.name)}
-        <svelte:component
-            this={field.component}
-            {...field.props}
-            bind:value={formData[field.name]}
-        />
-            <!-- Replace bind with below if superform is implemented -->
-            <!-- bind:value={form[def.Name]} -->
-    {/each}
-    <button type="submit">Submit</button>
-</form>
+    <div class="w-full mx-auto border-b-2 border-gray-500 my-7"></div>
+    
+    <form method="POST" use:enhance>
+        {#each renderedFields as field (field.name)}
+            <svelte:component
+                this={field.component}
+                {...field.props}
+                bind:value={$form[field.name]}
+                errors={$errors[field.name] || []}
+            />
+        {/each}
+    
+        <div class="flex w-full gap-2">
+            <Button href="/reserve" variant="outline" btnClass={["w-1/2"]}>
+                Back
+            </Button>
+            <Button type="submit" variant="primary" btnClass={["w-1/2"]}>
+                Submit
+            </Button>
+        </div>
+    </form>
+</div>
