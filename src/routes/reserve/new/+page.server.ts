@@ -40,15 +40,23 @@ function convertToRFC3339WithTime(dateStr, timeStr, offset = '+08:00') {
   const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
   const dd = String(date.getUTCDate()).padStart(2, '0');
 
-  // Parse timeStr ('08:00AM') into 24-hour format
-  const [time, modifier] = timeStr.match(/(\d{1,2}:\d{2})(AM|PM)/i).slice(1, 3);
-  let [hours, minutes] = time.split(':').map(Number);
-  if (modifier.toUpperCase() === 'PM' && hours !== 12) hours += 12;
-  if (modifier.toUpperCase() === 'AM' && hours === 12) hours = 0;
+  // Normalize and extract time components (e.g., "8:00 AM", "5:00PM", etc.)
+  const timeMatch = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!timeMatch) {
+    throw new Error("Invalid time format. Use something like '8:00 AM' or '5:00PM'.");
+  }
 
+  let [_, hourStr, minuteStr, meridian] = timeMatch;
+  let hours = parseInt(hourStr, 10);
+  const minutes = parseInt(minuteStr, 10);
+
+
+  if (meridian.toUpperCase() === 'PM' && hours !== 12) hours += 12;
+  if (meridian.toUpperCase() === 'AM' && hours === 12) hours = 0;
+
+  
   const hh = String(hours).padStart(2, '0');
   const min = String(minutes).padStart(2, '0');
-
   // Construct RFC3339 string
   return `${yyyy}-${mm}-${dd}T${hh}:${min}:00${offset}`;
 }
