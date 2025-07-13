@@ -28,37 +28,37 @@ function joinLists(elem){
 }
 
 function convertToRFC3339WithTime(dateStr, timeStr, offset = '+08:00') {
-  // Parse date part
-  const date = new Date(dateStr);
+    // Parse date part
+    const date = new Date(dateStr);
 
-  if (isNaN(date.getTime())) {
-    throw new Error("Invalid date string");
-  }
+    if (isNaN(date.getTime())) {
+        throw new Error("Invalid date string");
+    }
 
-  // Extract the YYYY-MM-DD
-  const yyyy = date.getUTCFullYear();
-  const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const dd = String(date.getUTCDate()).padStart(2, '0');
+    // Extract the YYYY-MM-DD
+    const yyyy = date.getUTCFullYear();
+    const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(date.getUTCDate()).padStart(2, '0');
 
-  // Normalize and extract time components (e.g., "8:00 AM", "5:00PM", etc.)
-  const timeMatch = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-  if (!timeMatch) {
-    throw new Error("Invalid time format. Use something like '8:00 AM' or '5:00PM'.");
-  }
+    // Normalize and extract time components (e.g., "8:00 AM", "5:00PM", etc.)
+    const timeMatch = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!timeMatch) {
+        throw new Error("Invalid time format. Use the format of '8:00 AM' or '5:00PM'.");
+    }
 
-  let [_, hourStr, minuteStr, meridian] = timeMatch;
-  let hours = parseInt(hourStr, 10);
-  const minutes = parseInt(minuteStr, 10);
+    let [_, hourStr, minuteStr, meridian] = timeMatch;
+    let hours = parseInt(hourStr, 10);
+    const minutes = parseInt(minuteStr, 10);
 
 
-  if (meridian.toUpperCase() === 'PM' && hours !== 12) hours += 12;
-  if (meridian.toUpperCase() === 'AM' && hours === 12) hours = 0;
+    if (meridian.toUpperCase() === 'PM' && hours !== 12) hours += 12;
+    if (meridian.toUpperCase() === 'AM' && hours === 12) hours = 0;
 
-  
-  const hh = String(hours).padStart(2, '0');
-  const min = String(minutes).padStart(2, '0');
-  // Construct RFC3339 string
-  return `${yyyy}-${mm}-${dd}T${hh}:${min}:00${offset}`;
+
+    const hh = String(hours).padStart(2, '0');
+    const min = String(minutes).padStart(2, '0');
+    // Construct RFC3339 string
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}:00${offset}`;
 }
 
 export const actions = {
@@ -66,7 +66,7 @@ export const actions = {
         const { schema } = await getReservationSchema(event.fetch);
 		let form = await superValidate(event.request, zod(schema));
         
-		if (!form.valid) {
+		if (!form?.valid) {
 			return fail(400, { form });
 		}
 
@@ -84,15 +84,15 @@ export const actions = {
 
         const calendar = google.calendar({ version: 'v3', auth });
         const calendar_item = {
-            summary: `[PENDING] ${form.data.activityName ?? ""}`,
+            summary: `[PENDING] ${form?.data?.activityName ?? ""}`,
             location: 'The Third Space',
-            description: form.data.briefDescription,
+            description: form?.data?.briefDescription,
             start: {
-                dateTime: convertToRFC3339WithTime(String(form.data.schedEvent), form.data.timeSlotStart, '+08:00'),
+                dateTime: convertToRFC3339WithTime(String(form?.data?.schedEvent), form?.data?.timeSlotStart, '+08:00'),
                 timeZone: 'Asia/Manila',
             },
             end: {
-                dateTime: convertToRFC3339WithTime(String(form.data.schedEvent), form.data.timeSlotEnd, '+08:00'),
+                dateTime: convertToRFC3339WithTime(String(form?.data?.schedEvent), form?.data?.timeSlotEnd, '+08:00'),
                 timeZone: 'Asia/Manila',
             }
         };
@@ -113,7 +113,7 @@ export const actions = {
             const busySlots = freeBusyRes.data.calendars?.[calendarId]?.busy || [];
 
             if (busySlots.length > 0) {
-                let timeSlotEndErrors = form.errors.timeSlotEnd ?? [];
+                let timeSlotEndErrors = form?.errors?.timeSlotEnd ?? [];
                 timeSlotEndErrors.push('time slot conflict detected');
                 form.errors.timeSlotEnd = timeSlotEndErrors;
                 return fail(400, { form });
@@ -126,7 +126,7 @@ export const actions = {
             });
 
         } catch (err) {
-            let timeSlotEndErrors = form.errors.timeSlotEnd ?? [];
+            let timeSlotEndErrors = form?.errors?.timeSlotEnd ?? [];
             timeSlotEndErrors.push("failed to check or insert event");
             form.errors.timeSlotEnd = timeSlotEndErrors;
             return fail(400, { form });
@@ -146,7 +146,7 @@ export const actions = {
 
         const result = await res.json();
 
-        if ((result.status === 200) && (result.statusText === "OK")) {
+        if ((result?.status === 200) && (result?.statusText === "OK")) {
             throw redirect(303, "/reserve?toast=Successfully+submitted+form!&type=success");
         }
 	}
