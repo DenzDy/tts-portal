@@ -4,8 +4,9 @@ import { zod } from 'sveltekit-superforms/adapters'
 import { message } from 'sveltekit-superforms';
 import { fail, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { ResponsesTab } from '$env/static/private';
+import { RESPONSES_TAB, CALENDAR_ID, GOOGLE_SERVICE_ACCOUNT, CALENDAR_LINK } from '$env/static/private';
 import { json } from '@sveltejs/kit';
+import { google } from 'googleapis';
 
 export async function load(event) {
 	const { schema, reservationFields } = await getReservationSchema(event.fetch);
@@ -15,6 +16,7 @@ export async function load(event) {
 	return {
         form,
 		reservationFields,
+        calendarSource: env.CALENDAR_LINK || CALENDAR_LINK
 	};
 }
 
@@ -24,8 +26,6 @@ function joinLists(elem){
 	}
 	return elem;
 }
-
-import { google } from 'googleapis';
 
 function convertToRFC3339WithTime(dateStr, timeStr, offset = '+08:00') {
   // Parse date part
@@ -64,20 +64,18 @@ function convertToRFC3339WithTime(dateStr, timeStr, offset = '+08:00') {
 export const actions = {
 	default: async (event) => {
         const { schema } = await getReservationSchema(event.fetch);
-		const form = await superValidate(event.request, zod(schema));
+		let form = await superValidate(event.request, zod(schema));
         
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-        const calendarId = '7c16b6d1b813168b67088842ec7b78cc29e1559bf69019070face3d5363717ad@group.calendar.google.com';
+
+        const calendarId = env.CALENDAR_ID || CALENDAR_ID;
         
         let values = Object.values(form.data);
-        console.log(Object.entries(form.data));
-        console.log(typeof form.data.schedEvent);
 		values = values.map(joinLists);
 
-
-        const serviceAccount = JSON.parse(env.GOOGLE_CALENDAR_SERVICE_ACCOUNT);
+        const serviceAccount = JSON.parse(env.GOOGLE_SERVICE_ACCOUNT || GOOGLE_SERVICE_ACCOUNT);
         const auth = new google.auth.GoogleAuth({
             credentials: serviceAccount, // your key file
             scopes: ['https://www.googleapis.com/auth/calendar'],
@@ -86,7 +84,7 @@ export const actions = {
 
         const calendar = google.calendar({ version: 'v3', auth });
         const calendar_item = {
-            summary: form.data.activityName,
+            summary: `[PENDING] ${form.data.activityName ?? ""}`,
             location: 'The Third Space',
             description: form.data.briefDescription,
             start: {
@@ -102,38 +100,36 @@ export const actions = {
         const { start, end } = calendar_item;
 
         try {
-            // Step 1: Check for conflicts
-            console.log("Start: " + start.dateTime);
-            console.log("End: " + end.dateTime);
-
+            // Check for conflicts
             const freeBusyRes = await calendar.freebusy.query({
-            requestBody: {
-                timeMin: start.dateTime,
-                timeMax: end.dateTime,
-                timeZone: start.timeZone,
-                items: [{ id: calendarId }],
-            },
+                requestBody: {
+                    timeMin: start.dateTime,
+                    timeMax: end.dateTime,
+                    timeZone: start.timeZone,
+                    items: [{ id: calendarId }],
+                },
             });
-            console.log("Done.");
+
             const busySlots = freeBusyRes.data.calendars?.[calendarId]?.busy || [];
 
             if (busySlots.length > 0) {
-            console.warn('❌ Time slot is already booked:', busySlots);
-            return { success: false, message: 'Time slot conflict detected.' };
+                let timeSlotEndErrors = form.errors.timeSlotEnd ?? [];
+                timeSlotEndErrors.push('time slot conflict detected');
+                form.errors.timeSlotEnd = timeSlotEndErrors;
+                return fail(400, { form });
             }
 
-            // Step 2: Insert event if no conflict
+            // Add event if no conflict
             const insertRes = await calendar.events.insert({
-            calendarId,
-            requestBody: calendar_item,
+                calendarId,
+                requestBody: calendar_item,
             });
 
-            console.log('✅ Event created:', insertRes.data.htmlLink);
-            // return { success: true, eventLink: insertRes.data.htmlLink };
-
         } catch (err) {
-            console.error('❌ Error:', err);
-            return { success: false, message: 'Failed to check or insert event.' };
+            let timeSlotEndErrors = form.errors.timeSlotEnd ?? [];
+            timeSlotEndErrors.push("failed to check or insert event");
+            form.errors.timeSlotEnd = timeSlotEndErrors;
+            return fail(400, { form });
         }
 
         
@@ -143,7 +139,7 @@ export const actions = {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                values: [["Pending", -1, new Date(), ...values]],
+                values: [["Pending", "", "", -1, new Date(), ...values]],
                 targetTab: env.RESPONSES_TAB || RESPONSES_TAB
             })
         });

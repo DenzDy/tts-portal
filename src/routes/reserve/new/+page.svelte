@@ -9,6 +9,7 @@
     export let data: {
         form: SuperValidated<Infer<AnyZodObject>>;
         reservationFields: any[];
+        calendarSource: string;
     };
 
     const { form, errors } = superForm(data.form);
@@ -24,9 +25,22 @@
     let renderedFields = data?.reservationFields?.map(def => {
         return {
             name: def?.Name,
+            label: def?.Label,
             ...generateFormFields(def, classes)
         }
     })
+
+    $: erroredFields = Object.entries($errors)
+        .filter(([_, val]) => {
+            if (Array.isArray(val)) {
+                return val.length > 0;
+            }
+            if (val && typeof val === 'object' && '_errors' in val) {
+                return Array.isArray(val._errors) && val._errors.length > 0;
+            }
+            return false;
+        })
+        .map(([key]) => key);
 
 </script>
 
@@ -47,11 +61,24 @@
             />
             
             {#if field.name == 'timeSlotEnd'}
-                <iframe src="https://calendar.google.com/calendar/embed?src=7c16b6d1b813168b67088842ec7b78cc29e1559bf69019070face3d5363717ad%40group.calendar.google.com&ctz=Asia%2FManila" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+                <iframe src={data.calendarSource} class='w-full h-[600px] border-2 rounded-md border-blue' frameborder="0" scrolling="no" title="Google Calendar"></iframe>
             {/if}
         {/each}
+
+        {#if erroredFields.length > 0}
+            <div class="mb-6 border-2 border-red-500 rounded-md p-4 text-wrap">
+                <p class="font-bold">
+                    You have errors in the following fields:
+                </p>
+                <ul class="list-disc list-inside mx-4">
+                    {#each erroredFields as field}
+                        <li>{renderedFields.find(f => f.name == field)?.label}</li>
+                    {/each}
+                </ul>
+            </div>
+        {/if}
     
-        <div class="flex w-full gap-2">
+        <div class="flex w-full gap-2 my-4">
             <Button href="/reserve" variant="outline" btnClass={["w-1/2"]}>
                 Back
             </Button>
