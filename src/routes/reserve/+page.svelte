@@ -17,7 +17,7 @@
 
     <div class="w-full mx-auto border-b-2 border-gray-500 my-7"></div>
 
-    {#each guidelines as guideline (guideline[0])}
+    {#each guidelines as guideline (guideline?.question)}
         <FAQ
             question={guideline?.question}
             answer={guideline?.answer}
