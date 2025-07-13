@@ -4,7 +4,7 @@ import { UploadFileTypes, fileSizeLimit, fileSizeLimitText } from "./formTypes";
 
 export function buildZodField(def: FormFields): ZodType {
     let schema: ZodType;
-    let errorMessage: string = def?.['Custom Error Message'] || "Invalid format";
+    let errorMessage: string = def?.['Custom Error Message']?.toLowerCase() || "invalid format";
     let options: string[] = def.Options?.split("; ").map(opt => opt.trim()).filter(Boolean) ?? [];
 
     switch (def.Type?.toLowerCase()) {
@@ -13,11 +13,11 @@ export function buildZodField(def: FormFields): ZodType {
             schema = z.string().trim();
 
             if (def?.Required?.toLowerCase() === "true") {
-                schema = (schema as z.ZodString).min(1, { "message": "Required" });
+                schema = (schema as z.ZodString).min(1, { "message": "required" });
             }
 
             if (def['Max Length']) {
-                schema = (schema as z.ZodString).max(Number(def['Max Length']), { "message": "Exceeded character limit" });
+                schema = (schema as z.ZodString).max(Number(def['Max Length']), { "message": "exceeded character limit" });
             }
             if (def.Regex) {
                 schema = (schema as z.ZodString).regex(new RegExp(def.Regex), { "message": errorMessage });
@@ -25,10 +25,10 @@ export function buildZodField(def: FormFields): ZodType {
             break;
         
         case 'email':
-            let emailSchema = z.string().email({ message: errorMessage || "Invalid email address" });
+            let emailSchema = z.string().email({ message: errorMessage || "invalid email address" });
 
             if (def['Max Length']) {
-                emailSchema = emailSchema.max(Number(def['Max Length']), { "message": "Exceeded character limit" });
+                emailSchema = emailSchema.max(Number(def['Max Length']), { "message": "exceeded character limit" });
             }
 
             schema = emailSchema;
@@ -39,35 +39,35 @@ export function buildZodField(def: FormFields): ZodType {
                 let numSchema = z.string().regex(new RegExp(def.Regex), { "message": errorMessage });
 
                 if (def?.Required?.toLowerCase() === "true") {
-                    numSchema = (numSchema as z.ZodString).min(1, { "message": "Required" });
+                    numSchema = (numSchema as z.ZodString).min(1, { "message": "required" });
                 }
 
                 schema = numSchema.transform(Number);
                 
                 if (def['Min Value']) {
                     const minVal = Number(def['Min Value']);
-                    schema = (schema as z.ZodNumber).min(minVal, { message: `Number should be minimum ${minVal}` });
+                    schema = (schema as z.ZodNumber).min(minVal, { message: `number should be minimum ${minVal}` });
                 }
                 if (def['Max Value']) {
                     const maxVal = Number(def['Max Value']);
-                    schema = (schema as z.ZodNumber).max(maxVal, { message: `Number should be maximum ${maxVal}` });
+                    schema = (schema as z.ZodNumber).max(maxVal, { message: `number should be maximum ${maxVal}` });
                 }
                 break;
             }
 
             // If no regex, use z.coerce.number directly
             schema = z.coerce.number({
-                invalid_type_error: errorMessage || "Must be a number",
+                invalid_type_error: errorMessage || "must be a number",
             });
 
             if (def['Min Value']) {
                 const minVal = Number(def['Min Value']);
-                schema = (schema as z.ZodNumber).min(minVal, { message: `Number should be minimum ${minVal}` });
+                schema = (schema as z.ZodNumber).min(minVal, { message: `number should be minimum ${minVal}` });
             }
 
             if (def['Max Value']) {
                 const maxVal = Number(def['Max Value']);
-                schema = (schema as z.ZodNumber).max(maxVal, { message: `Number should be maximum ${maxVal}` });
+                schema = (schema as z.ZodNumber).max(maxVal, { message: `number should be maximum ${maxVal}` });
             }
             break;
 
@@ -83,7 +83,7 @@ export function buildZodField(def: FormFields): ZodType {
                 // Apply 'min(1)' IF REQUIRED
                 if (def?.Required?.toLowerCase() === "true") {
                     arraySchema = arraySchema.min(1, {
-                        message: "At least one option must be selected"
+                        message: "at least one option must be selected"
                     });
                 }
 
@@ -99,7 +99,7 @@ export function buildZodField(def: FormFields): ZodType {
                 if (def?.Required?.toLowerCase() === "true") {
                     schema = (booleanSchema as z.ZodEffects<any, boolean>)
                         .refine(val => val === true, {
-                            message: "This box must be checked."
+                            message: "this box must be checked."
                         });
                 } else {
                     schema = booleanSchema;
@@ -110,7 +110,7 @@ export function buildZodField(def: FormFields): ZodType {
 		case 'radio':
             if (options.length > 0) {
                 schema = z.enum(options as [string, ...string[]], {
-                    errorMap: () => ({ message: "Please select an option" })
+                    errorMap: () => ({ message: "please select an option" })
                 });
             } else {
                 schema = z.string();
@@ -123,7 +123,7 @@ export function buildZodField(def: FormFields): ZodType {
                 if (!selectOptions.includes("None")) selectOptions.push("None");
 
                 schema = z.enum(selectOptions as [string, ...string[]], {
-                    errorMap: () => ({ message: "Please select an option" })
+                    errorMap: () => ({ message: "please select an option" })
                 });
             } else {
                 schema = z.string();
@@ -140,14 +140,14 @@ export function buildZodField(def: FormFields): ZodType {
                 
                 if (def?.Required?.toLowerCase() === "true") {
                     schema = (schema as z.ZodArray<z.ZodEnum<[string, ...string[]]>>).min(1, {
-                        message: "At least one option must be selected"
+                        message: "at least one option must be selected"
                     });
                 }
             } else {
                 schema = z.array(z.string()); // Fallback for no options
                 if (def?.Required?.toLowerCase() === "true") {
                     schema = (schema as z.ZodArray<z.ZodString>).min(1, {
-                        message: "At least one option must be selected"
+                        message: "at least one option must be selected"
                     });
                 }
             }
@@ -155,20 +155,20 @@ export function buildZodField(def: FormFields): ZodType {
         
         case 'date':
             schema = z.coerce.date({
-                required_error: "Date is required.",
-                invalid_type_error: "Invalid date format."
+                required_error: "date is required.",
+                invalid_type_error: "invalid date format"
             });
             break;
 
         case 'upload':
-            schema = z.instanceof(File, { "message": "Please upload a file" })
+            schema = z.instanceof(File, { "message": "please upload a file" })
                 .refine(
                     (file) => UploadFileTypes.includes(file.type),
-                    { message: "Invalid file type" }
+                    { message: "invalid file type" }
                 )
                 .refine(
                     (file) => file.size <= fileSizeLimit,
-                    { message: `File size should be less than ${fileSizeLimitText}` }
+                    { message: `file size should be less than ${fileSizeLimitText}` }
                 );
             
             break;
