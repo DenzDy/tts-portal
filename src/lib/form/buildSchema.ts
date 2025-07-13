@@ -10,7 +10,7 @@ export function buildZodField(def: FormFields): ZodType {
     switch (def.Type?.toLowerCase()) {
         case 'text':
         case 'textarea':
-            schema = z.string();
+            schema = z.string().trim();
 
             if (def?.Required?.toLowerCase() === "true") {
                 schema = (schema as z.ZodString).min(1, { "message": "required" });
@@ -174,7 +174,7 @@ export function buildZodField(def: FormFields): ZodType {
             break;
         
         default:
-            schema = z.string();
+            schema = z.string().trim();
     }
 
     if (def?.Required?.toLowerCase() !== "true") {
