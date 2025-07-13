@@ -3,7 +3,6 @@
     import type { SuperValidated, Infer } from 'sveltekit-superforms';
     import type { AnyZodObject } from 'zod';
     import { superForm } from 'sveltekit-superforms/client';
-    import { enhance } from '$app/forms';
     import Button from '$lib/components/form/Button.svelte';
 
     export let data: {
@@ -12,7 +11,7 @@
         calendarSource: string;
     };
 
-    const { form, errors } = superForm(data.form);
+    const { form, errors, enhance, submitting } = superForm(data.form);
 
     let classes = {
         "divClasses": ["my-4"],
@@ -82,7 +81,12 @@
             <Button href="/reserve" variant="outline" btnClass={["w-1/2"]}>
                 Back
             </Button>
-            <Button type="submit" variant="primary" btnClass={["w-1/2"]}>
+            <Button
+                type="submit"
+                variant="primary"
+                btnClass={["w-1/2"]}
+                loading={$submitting}
+            >
                 Submit
             </Button>
         </div>

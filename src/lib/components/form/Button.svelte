@@ -1,64 +1,95 @@
 <script lang="ts">
-  import { cn } from "$lib/utils";
-  import type { ClassValue } from "clsx";
-  export let type: "button" | "submit" = "button";
-  export let variant: "primary" | "outline" | "upload" = "primary";
-  export let icon: string | null = null;
-  export let btnClass: ClassValue[] = [];
-  export let href: string | null = null;
+    import { cn } from "$lib/utils";
+    import type { ClassValue } from "clsx";
+    export let type: "button" | "submit" = "button";
+    export let variant: "primary" | "outline" | "upload" = "primary";
+    export let icon: string | null = null;
+    export let btnClass: ClassValue[] = [];
+    export let href: string | null = null;
+    export let loading: boolean = false;
 </script>
 
 {#if href}
-  <a href={href} class={cn(`btn ${variant}`, btnClass)}>
-    {#if icon}
-      <span class="icon">{@html icon}</span>
-    {/if}
-    <slot />
-  </a>
+    <a href={href} class={cn(`btn ${variant}`, btnClass)}>
+        {#if icon}
+        <span class="icon">{@html icon}</span>
+        {/if}
+        <slot />
+    </a>
 {:else}
-  <button type={type} class={cn(`btn ${variant}`, btnClass)}>
-    {#if icon}
-      <span class="icon">{@html icon}</span>
-    {/if}
-    <slot />
-  </button>
+    <button type={type} class={cn(`btn ${variant}`, btnClass)} disabled={loading} aria-disabled={loading}>
+        {#if loading}
+            <span class={cn("loader", variant === "outline" && "loader-outline")}></span>
+        {/if}
+        {#if icon && !loading}
+            <span class="icon">{@html icon}</span>
+        {/if}
+        <slot />
+    </button>
 {/if}
 
 <style>
-  .btn {
-    padding: 0.5rem 1.25rem;
-    border-radius: 0.375rem;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-  }
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        filter: grayscale(100%);
+    }
 
-  .primary {
-    background-color: #F9943B;
-    color: white;
-    border: 2px solid #F9943B;
-  }
+    .loader {
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        animation: spin 0.6s linear infinite;
+    }
 
-  .outline {
-    background-color: transparent;
-    border: 2px solid #F9943B;
-    color: black;
-    outline: none;
-  }
+    .loader-outline {
+        border: 3px solid rgba(249, 148, 59, 0.3);
+        border-top: 3px solid #F9943B;
+    }
 
-  .upload {
-    background-color: #F9943B;
-    color: white;
-    border: none;
-    gap: 0.5rem;
-  }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 
-  .icon {
-    display: inline-flex;
-    margin-right: 0.5rem;
-  }
+    .btn {
+        padding: 0.5rem 1.25rem;
+        border-radius: 0.375rem;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        gap: 0.5rem;
+    }
+
+    .primary {
+        background-color: #F9943B;
+        color: white;
+        border: 2px solid #F9943B;
+    }
+
+    .outline {
+        background-color: transparent;
+        border: 2px solid #F9943B;
+        color: black;
+        outline: none;
+    }
+
+    .upload {
+        background-color: #F9943B;
+        color: white;
+        border: none;
+        gap: 0.5rem;
+    }
+
+    .icon {
+        display: inline-flex;
+        margin-right: 0.5rem;
+    }
 </style>
+
