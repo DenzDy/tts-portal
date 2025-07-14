@@ -11,12 +11,19 @@ export async function getReservationSchema(fetch: typeof globalThis.fetch) {
     fields = addNone(fields);
 
 	const schemaShape = Object.fromEntries(
-		fields.map((def) => [def.Name, buildZodField(def)])
-	);
+        fields
+            .map((def) => [def.Name, buildZodField(def)])
+            .filter(([_, val]) => val !== undefined)
+    );
 
 	const reservationFormSchema = z.object(schemaShape);
+
+    if (!reservationFormSchema || typeof reservationFormSchema.parse !== "function") {
+        throw new Error("Generated schema is invalid.");
+    }
+
 	return { 
         reservationFields: fields,
-        schema: reservationFormSchema
+        schema: reservationFormSchema,
     };
 }
