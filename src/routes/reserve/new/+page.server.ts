@@ -131,9 +131,17 @@ export const actions = {
             });
 
         } catch (err) {
+            const startTime = new Date(start);
+            const endTime = new Date(end);
             let timeSlotEndErrors = form?.errors?.timeSlotEnd ?? [];
-            timeSlotEndErrors.push("failed to check or insert event");
-            form.errors.timeSlotEnd = timeSlotEndErrors;
+            if (start >= end){
+                timeSlotEndErrors.push("Start time must not occur after the end time.");
+                form.errors.timeSlotEnd = timeSlotEndErrors;
+            }
+            else {
+                timeSlotEndErrors.push("failed to check or insert event");
+                form.errors.timeSlotEnd = timeSlotEndErrors;
+            }
             return fail(400, { form });
         }
 
