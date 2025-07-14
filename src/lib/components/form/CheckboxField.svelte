@@ -104,7 +104,8 @@
     {#if values.some(isOthersOption)}
         <input
             type="text"
-            name={name}
+            bind:group={values}
+            name={name + "Others"}
             bind:value={othersText}
             placeholder={placeholder !== "" ? placeholder : "Please specify..."}
             class={cn("font-[Garet]", inputClasses ?? [], "mt-1")}

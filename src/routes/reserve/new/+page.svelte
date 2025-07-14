@@ -52,12 +52,14 @@
     
     <form method="POST" use:enhance>
         {#each renderedFields as field (field.name)}
-            <svelte:component
-                this={field.component}
-                {...field.props}
-                bind:value={$form[field.name]}
-                errors={$errors[field.name] || []}
-            />
+            {#if !field.name.includes('Others')}
+                <svelte:component
+                    this={field.component}
+                    {...field.props}
+                    bind:value={$form[field.name]}
+                    errors={$errors[field.name] || []}
+                />
+            {/if}
             
             {#if field.name == 'timeSlotEnd'}
                 <iframe src={data.calendarSource} class='w-full h-[600px] border-2 rounded-md border-blue' frameborder="0" scrolling="no" title="Google Calendar"></iframe>
