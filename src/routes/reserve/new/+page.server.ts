@@ -68,6 +68,9 @@ export const actions = {
         
 		if (!form?.valid) {
             console.log('hi there.');
+            if (form.data.schedEvent instanceof Date) {
+                 form.data.schedEvent = form.data.schedEvent.toISOString().split('T')[0]; // "YYYY-MM-DD"
+            }
 			return fail(400, { form });
 		}
 
