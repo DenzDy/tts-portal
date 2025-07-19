@@ -80,7 +80,7 @@
         <p class="text-center font-[Garet] text-xs/6 sm:text-xl/12 sm:text-start font-bold text-black mb-3">The Third Space is a holistic, air-conditioned co-working space where students of the University of the Philippines can study for examinations or research, mingle with friends, collaborate with peers, and participate in various wellness initiatives. It aims to improve the overall well-being of students through activities that will restore their appreciation for discovert, collaborative learning, and community-building.</p>
     </div>
 </div>
-<div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3 sm:px-8 sm:items-start">
+<div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3 sm:px-8 sm:py-8">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary sm:text-[4rem] font-semibold">the three zones.</h1>
     <div class="flex flex-col items-center gap-7 sm:flex sm:flex-row sm:w-full sm:justify-center sm:items-start sm:gap-16">
         <ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
