@@ -61,3 +61,7 @@
 .bg-hero-desktop {
     background-image: url(/src/lib/static/images/hero-unedited.png);
 }
+
+::-webkit-scrollbar {
+    display: none;
+}

@@ -2,7 +2,7 @@
     import { ChevronDown, MapPin } from '@lucide/svelte';
     import { onMount } from 'svelte';
     import ZoneCard from '$lib/components/zone-card/ZoneCard.svelte';
-    import Carousel from 'svelte-carousel';
+    import CardCarousel from '$lib/components/card-carousel/CardCarousel.svelte';
     import { browser } from '$app/environment';
     import EventCard from '$lib/components/event-card/EventCard.svelte';
     import hero from '$lib/static/images/hero.png';
@@ -11,11 +11,39 @@
     import desktopLogo from '$lib/static/images/desktop-logo.png';
     import desktopHero from '$lib/static/images/hero-unedited.png';
     import newspaperTTS from '$lib/static/images/newspaper-tts.png';
-    let carousel;
-    const handleNextClick = () => {
-        carousel.goToNext();
-    }
 
+    const events = [
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 11, 2024',
+            description: 'Lorem ipsum.'
+        },
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 12, 2024',
+            description: 'Lorem ipsum.'
+        },
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 13, 2024',
+            description: 'Lorem ipsum.'
+        },
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 14, 2024',
+            description: 'Lorem ipsum.'
+        },
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 15, 2024',
+            description: 'Lorem ipsum.'
+        }
+    ]
     let windowWidth = 0;
     onMount(() => {
 		windowWidth = window.innerWidth;
@@ -64,11 +92,7 @@
 <div id="recent-events" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">recent events.</h1>
     {#if browser}
-        <Carousel bind:this={carousel} particlesToShow={isDesktop}>
-            <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
-            <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
-            <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
-        </Carousel>
+        <CardCarousel {events}/>
     {/if}
 
 </div>
