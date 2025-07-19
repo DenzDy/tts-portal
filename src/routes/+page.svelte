@@ -1,58 +1,106 @@
 <script lang="ts">
     import { ChevronDown, MapPin } from '@lucide/svelte';
+    import { onMount } from 'svelte';
     import ZoneCard from '$lib/components/zone-card/ZoneCard.svelte';
-    import Carousel from 'svelte-carousel';
+    import CardCarousel from '$lib/components/card-carousel/CardCarousel.svelte';
     import { browser } from '$app/environment';
     import EventCard from '$lib/components/event-card/EventCard.svelte';
     import hero from '$lib/static/images/hero.png';
     import anniv from '$lib/static/images/anniv.png';
     import mobileLogo from '$lib/static/images/mobile-logo.png';
+    import desktopLogo from '$lib/static/images/desktop-logo.png';
+    import desktopHero from '$lib/static/images/hero-unedited.png';
     import newspaperTTS from '$lib/static/images/newspaper-tts.png';
-    let carousel;
-    const handleNextClick = () => {
-        carousel.goToNext();
-    }
+
+    const events = [
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 11, 2024',
+            description: 'Lorem ipsum.'
+        },
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 12, 2024',
+            description: 'Lorem ipsum.'
+        },
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 13, 2024',
+            description: 'Lorem ipsum.'
+        },
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 14, 2024',
+            description: 'Lorem ipsum.'
+        },
+        {
+            image: anniv,
+            headerText: 'The Third Space Anniversary',
+            date: 'April 15, 2024',
+            description: 'Lorem ipsum.'
+        }
+    ]
+    let windowWidth = 0;
+    onMount(() => {
+		windowWidth = window.innerWidth;
+		window.addEventListener('resize', () => {
+			windowWidth = window.innerWidth;
+		});
+	});
+
+	$: isDesktop = windowWidth > 640 ? 3 : 1;
 </script>
 
-<div style="background-image: url({hero})"class="snap-start bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10">
-    <img id='hero-image' src={mobileLogo} alt="The Third Space Logo" class="w-[500px] h-[300px] object-cover">
-    <p id="hero-text" class="font-[Montserrat] font-medium text-black w-full text-wrap p-5 text-center ">
-        a place where people spend their time between their first place (home) and second place (work or school)
-    </p>
-    <ChevronDown/>
+<div id="hero" class="snap-start bg-hero bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10 sm:bg-none!">
+    <div class="sm:flex sm:flex-row sm:items-center sm:w-full sm:px-10 sm:gap-10">
+        <img id="hero-image-large" src={desktopLogo} alt="The Third Space Logo" srcset="" class="hidden sm:block sm:w-[45%] max-w-[600px]">
+        <img id='hero-image-small' src={mobileLogo} alt="The Third Space Logo" class="w-[500px] h-[300px] object-cover sm:hidden">
+        <p id="hero-text" class="font-[Montserrat] font-medium text-black w-full text-wrap p-5 text-xl text-center sm:text-start ">
+            a place where people spend their time between their first place (home) and second place (work or school)
+        </p>
+    </div>
+    <ChevronDown class="sm:hidden"/>
+    <div class="bg-hero-desktop w-[95%] hidden sm:block min-h-[400px] grow-3 my-4 rounded-xl bg-center"></div>
     <div id="stripes" class="w-full">
         <div class="bg-blue w-full h-[20px]"></div>
         <div class="bg-orange w-full h-[20px]"></div>
         <div class="bg-green w-full h-[20px]"></div>
     </div>
 </div>
-<div id="about-us" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
-    <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">about the third space.</h1>
-    <img src={newspaperTTS} alt="" srcset="" class="w-[80%]">
-    <p class="text-center font-[Garet] text-xs/6 font-bold text-black mb-3">The Third Space is a holistic, air-conditioned co-working space where students of the University of the Philippines can study for examinations or research, mingle with friends, collaborate with peers, and participate in various wellness initiatives. It aims to improve the overall well-being of students through activities that will restore their appreciation for discovert, collaborative learning, and community-building.</p>
-    
+<div id="about-us" class="snap-start w-full mt-8 pt-3 flex mb-10 flex-col sm:flex sm:flex-row items-center gap-7 px-3 sm:gap-16">
+    <h1 class="font-[League_Spartan] sm:hidden text-[3rem]/10 text-center text-primary font-semibold">about the third space.</h1>
+    <img src={newspaperTTS} alt="" srcset="" class="w-[80%] sm:w-[40%]">
+    <p class="text-center font-[Garet] text-xs/6 font-bold text-black sm:hidden mb-3">The Third Space is a holistic, air-conditioned co-working space where students of the University of the Philippines can study for examinations or research, mingle with friends, collaborate with peers, and participate in various wellness initiatives. It aims to improve the overall well-being of students through activities that will restore their appreciation for discovert, collaborative learning, and community-building.</p>
+    <div class="hidden sm:flex sm:flex-col sm:gap-16 w-[50%]">
+        <h1 class="font-[League_Spartan] text-[3rem]/10 text-primary font-semibold sm:text-[4rem]">about the third space.</h1>
+        <p class="text-center font-[Garet] text-xs/6 sm:text-xl/12 sm:text-start font-bold text-black mb-3">The Third Space is a holistic, air-conditioned co-working space where students of the University of the Philippines can study for examinations or research, mingle with friends, collaborate with peers, and participate in various wellness initiatives. It aims to improve the overall well-being of students through activities that will restore their appreciation for discovert, collaborative learning, and community-building.</p>
+    </div>
 </div>
-<div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
-    <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">the three zones.</h1>
-    <ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
-    <ZoneCard zoneName="blue" zoneColor="blue" zoneDescription="interaction of peers and friends — mindful conversations and discussions"/>
-    <ZoneCard zoneName="green" zoneColor="green" zoneDescription="different wellness activities and learning opportunities"/>
+<div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3 sm:px-8 sm:items-start">
+    <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary sm:text-[4rem] font-semibold">the three zones.</h1>
+    <div class="flex flex-col items-center gap-7 sm:flex sm:flex-row sm:w-full sm:justify-center sm:items-start sm:gap-16">
+        <ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
+        <ZoneCard zoneName="blue" zoneColor="blue" zoneDescription="interaction of peers and friends — mindful conversations and discussions"/>
+        <ZoneCard zoneName="green" zoneColor="green" zoneDescription="different wellness activities and learning opportunities"/>    
+    </div>
+    
 </div>
 <div id="recent-events" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">recent events.</h1>
     {#if browser}
-        <Carousel bind:this={carousel}>
-            <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
-            <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
-            <EventCard image={anniv} headerText="The Third Space Anniversary" date="04/10/2025" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."/>
-        </Carousel>
+        <CardCarousel {events}/>
     {/if}
 
 </div>
-<div id="contact-us" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
+<div id="contact-us" class="snap-start w-full mt-8 pt-3 flex flex-col pb-10 items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">contact us.</h1>
-    <div class="flex flex-row">
-        <div class="flex flex-col gap-3 mb-5">
+    <div class="flex flex-row gap-5 justify-center">
+        <iframe title='Third Space Map' class="rounded-xl hidden sm:block w-[30vw]"src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4568.753586221223!2d121.07024019999999!3d14.652022499999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b70017b34541%3A0x3d9454e592f0a43f!2sThird%20Space%20UP%20Diliman!5e1!3m2!1sen!2sph!4v1752918055704!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="flex flex-col gap-7 mb-5">
             <!-- Contact Info Items-->
             <div class="flex flex-row items-center gap-3">
                 <svg role="img" viewBox="0 0 24 24" width="30px" xmlns="http://www.w3.org/2000/svg"><title>Facebook</title><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>
