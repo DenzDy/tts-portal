@@ -1,120 +1,147 @@
-<script lang="ts">
-  const requests = [
-    {
-      date: '07/14/2025',
-      name: 'Activity A',
-      status: 'Accepted'
-    },
-    {
-      date: '07/15/2025',
-      name: 'Activity B',
-      status: 'Pending'
-    },
-    {
-      date: '07/16/2025',
-      name: 'Activity C',
-      status: 'Rejected'
+<script>
+  export let data;
+  const { reservations } = data;
+
+  let search = '';
+
+  async function updateStatus(res, newStatus) {
+    const confirmed = confirm(`Are you sure you want to mark this as "${newStatus}"?`);
+    if (!confirmed) return;
+
+    const response = await fetch('/api/gsheet/update-status', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ row: res.id, newStatus })
+    });
+
+    if (response.ok) {
+      res.status = newStatus;
+    } else {
+      alert('Failed to update status.');
     }
-  ];
-</script>
-
-<div class="dashboard-wrapper">
-  <h1>Dashboard</h1>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Activity Name</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {#each requests as r}
-        <tr>
-          <td>{r.date}</td>
-          <td>{r.name}</td>
-          <td>
-            <span class={`status ${r.status.toLowerCase()}`}>{r.status}</span>
-          </td>
-          <td>
-            <span class="action accept">Accept</span>
-            /
-            <span class="action reject">Reject</span>
-          </td>
-        </tr>
-      {/each}
-    </tbody>
-  </table>
-</div>
-
-<style>
-  .dashboard-wrapper {
-    max-width: 1440px;
-    margin: 80px auto;
-    font-family: 'Garet', sans-serif;
   }
 
+  $: filtered = reservations.filter(r => {
+    const lowerSearch = search.toLowerCase();
+    return (
+      r.activity.toLowerCase().includes(lowerSearch) ||
+      new Date(r.date).toLocaleDateString().includes(lowerSearch) ||
+      r.status.toLowerCase().includes(lowerSearch)
+    );
+  });
+</script>
+
+<style>
   h1 {
     text-align: center;
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 20px;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-container {
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  .search-bar {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   }
 
-  th {
+  thead {
     background-color: #d3d3d3;
+  }
+
+  th, td {
+    padding: 1rem;
+    border: 1px solid #ccc;
     text-align: left;
-    padding: 12px 16px;
-    font-weight: 600;
   }
 
-  td {
-    padding: 12px 16px;
-    font-weight: 500;
-  }
+  .approved { color: green; }
+  .rejected { color: red; }
+  .pending { color: orange; }
 
-  .status.accepted {
-    color: green;
-  }
-
-  .status.pending {
-    color: #f7942f;
-  }
-
-  .status.rejected {
-    color: red;
-  }
-
-  .action {
-    font-weight: 600;
+  .action-button {
     cursor: pointer;
+    font-weight: bold;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    text-decoration: underline;
   }
 
-  .action.accept {
-    color: green;
-  }
-
-  .action.reject {
-    color: red;
-    margin-left: 6px;
-  }
-
-  @media (max-width: 600px) {
-    table {
-      font-size: 0.9rem;
-    }
-
-    th, td {
-      padding: 10px 12px;
-    }
-  }
+  .accept { color: green; margin-right: 0.5rem; }
+  .reject { color: red; }
+  .no-action { font-style: italic; color: gray; }
 </style>
+
+<h1>Dashboard</h1>
+
+<div class="dashboard-container">
+  <input
+    type="text"
+    placeholder="Search by date or activity..."
+    bind:value={search}
+    class="search-bar"
+  />
+
+  {#if filtered.length === 0}
+    <p style="text-align: center;">No matching reservations found.</p>
+  {:else}
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Activity Name</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each filtered as res}
+          <tr>
+            <td>{new Date(res.date).toLocaleDateString()}</td>
+            <td>{res.activity}</td>
+            <td>
+              <span class={
+                res.status === 'Approved' ? 'approved' :
+                res.status === 'Rejected' ? 'rejected' : 'pending'
+              }>
+                {res.status}
+              </span>
+            </td>
+            <td>
+              {#if res.status === 'Pending'}
+                <button class="action-button accept" on:click={() => updateStatus(res, 'Approved')}>Accept</button>
+                <button class="action-button reject" on:click={() => updateStatus(res, 'Rejected')}>Reject</button>
+              {:else}
+                <span class="no-action">No action available</span>
+              {/if}
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  {/if}
+</div>
+
+
