@@ -7,7 +7,6 @@
     import { onMount } from 'svelte';
 	let showImage = $state(false);
 	const { container } = $props<{ container: HTMLElement | null }>();
-
 	onMount(() => {
 		if (!container) return;
 

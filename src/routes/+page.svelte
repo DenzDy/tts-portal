@@ -96,10 +96,11 @@
     {/if}
 
 </div>
-<div id="contact-us" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3">
+<div id="contact-us" class="snap-start w-full mt-8 pt-3 flex flex-col pb-10 items-center gap-7 px-3">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary font-semibold">contact us.</h1>
-    <div class="flex flex-row">
-        <div class="flex flex-col gap-3 mb-5">
+    <div class="flex flex-row gap-5 justify-center">
+        <iframe title='Third Space Map' class="rounded-xl hidden sm:block w-[30vw]"src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4568.753586221223!2d121.07024019999999!3d14.652022499999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b70017b34541%3A0x3d9454e592f0a43f!2sThird%20Space%20UP%20Diliman!5e1!3m2!1sen!2sph!4v1752918055704!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="flex flex-col gap-7 mb-5">
             <!-- Contact Info Items-->
             <div class="flex flex-row items-center gap-3">
                 <svg role="img" viewBox="0 0 24 24" width="30px" xmlns="http://www.w3.org/2000/svg"><title>Facebook</title><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>
