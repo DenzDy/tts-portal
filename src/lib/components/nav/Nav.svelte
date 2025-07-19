@@ -4,10 +4,9 @@
     import { slide } from 'svelte/transition';
     import NavItem from '$lib/components/nav/NavItem.svelte';
     import desktopLogo from '$lib/static/images/desktop-logo.png';
-    import { onMount } from 'svelte';
 	let showImage = $state(false);
 	const { container } = $props<{ container: HTMLElement | null }>();
-	onMount(() => {
+	$effect(() => {
 		if (!container) return;
 
 		const onScroll = () => {
