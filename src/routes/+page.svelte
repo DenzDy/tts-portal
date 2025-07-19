@@ -27,7 +27,7 @@
 	$: isDesktop = windowWidth > 640 ? 3 : 1;
 </script>
 
-<div class="snap-start bg-hero bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10 sm:bg-none!">
+<div id="hero" class="snap-start bg-hero bg-size-[auto_100%] bg-[rgba(255,255,255,0.4)] bg-blend-lighten bg-center w-full h-full flex flex-col items-center justify-between pt-10 sm:bg-none!">
     <div class="sm:flex sm:flex-row sm:items-center sm:w-full sm:px-10 sm:gap-10">
         <img id="hero-image-large" src={desktopLogo} alt="The Third Space Logo" srcset="" class="hidden sm:block sm:w-[45%] max-w-[600px]">
         <img id='hero-image-small' src={mobileLogo} alt="The Third Space Logo" class="w-[500px] h-[300px] object-cover sm:hidden">
@@ -36,7 +36,7 @@
         </p>
     </div>
     <ChevronDown class="sm:hidden"/>
-    <div class="bg-hero-desktop w-[95%] min-h-[400px] grow-3 my-4 rounded-xl bg-center"></div>
+    <div class="bg-hero-desktop w-[95%] hidden sm:block min-h-[400px] grow-3 my-4 rounded-xl bg-center"></div>
     <div id="stripes" class="w-full">
         <div class="bg-blue w-full h-[20px]"></div>
         <div class="bg-orange w-full h-[20px]"></div>
