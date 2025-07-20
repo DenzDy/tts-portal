@@ -16,25 +16,52 @@ async function getSheetsClient() {
 }
 
 export async function PATCH({ request }) {
-	const { row, newStatus } = await request.json();
+	try {
+		const requestBody = await request.json();
+		console.log('Raw request body:', requestBody);
 
-	if (!row || !newStatus) {
-		return json({ error: 'Missing parameters' }, { status: 400 });
-	}
+		const { rowIndex, newStatus } = requestBody;
+		console.log('Extracted values:', { rowIndex, newStatus });
 
-	const sheets = await getSheetsClient();
-
-	// Column A is "Approved?", column index = 0 → column letter = A
-	const range = `'${targetTab}'!A${row}`;
-
-	await sheets.spreadsheets.values.update({
-		spreadsheetId,
-		range,
-		valueInputOption: 'RAW',
-		requestBody: {
-			values: [[newStatus]]
+		if (!rowIndex || !newStatus) {
+			console.log('Missing parameters - rowIndex:', rowIndex, 'newStatus:', newStatus);
+			return json({ 
+				error: 'Missing parameters', 
+				received: { rowIndex, newStatus },
+				success: false 
+			}, { status: 400 });
 		}
-	});
 
-	return json({ success: true });
+		const sheets = await getSheetsClient();
+
+		// Column A is "Approved?" (index 0)
+		const range = `'${targetTab}'!A${rowIndex}`;
+		console.log('Updating range:', range, 'with value:', newStatus);
+
+		const response = await sheets.spreadsheets.values.update({
+			spreadsheetId,
+			range,
+			valueInputOption: 'RAW',
+			requestBody: {
+				values: [[newStatus]]
+			}
+		});
+
+		console.log('Google Sheets API response status:', response.status);
+		console.log('Google Sheets API response data:', response.data);
+
+		return json({ 
+			success: true, 
+			message: 'Status updated successfully',
+			updatedRange: range,
+			newValue: newStatus
+		});
+
+	} catch (error) {
+		console.error('Error in update-status API:', error);
+		return json({ 
+			error: error.message || 'Failed to update status',
+			success: false 
+		}, { status: 500 });
+	}
 }
