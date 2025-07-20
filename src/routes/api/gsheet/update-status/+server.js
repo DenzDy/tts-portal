@@ -23,10 +23,20 @@ export async function PATCH({ request }) {
 		const { rowIndex, newStatus } = requestBody;
 		console.log('Extracted values:', { rowIndex, newStatus });
 
-		if (!rowIndex || !newStatus) {
-			console.log('Missing parameters - rowIndex:', rowIndex, 'newStatus:', newStatus);
+		// Validate parameters more thoroughly
+		if (!rowIndex || rowIndex < 2) {
+			console.log('Invalid rowIndex - must be >= 2, received:', rowIndex);
 			return json({ 
-				error: 'Missing parameters', 
+				error: 'Invalid row index', 
+				received: { rowIndex, newStatus },
+				success: false 
+			}, { status: 400 });
+		}
+
+		if (!newStatus || (newStatus !== 'Approved' && newStatus !== 'Rejected')) {
+			console.log('Invalid newStatus - must be "Approved" or "Rejected", received:', newStatus);
+			return json({ 
+				error: 'Invalid status - must be "Approved" or "Rejected"', 
 				received: { rowIndex, newStatus },
 				success: false 
 			}, { status: 400 });
@@ -50,18 +60,24 @@ export async function PATCH({ request }) {
 		console.log('Google Sheets API response status:', response.status);
 		console.log('Google Sheets API response data:', response.data);
 
-		return json({ 
-			success: true, 
-			message: 'Status updated successfully',
-			updatedRange: range,
-			newValue: newStatus
-		});
+		if (response.status === 200) {
+			return json({ 
+				success: true, 
+				message: 'Status updated successfully',
+				updatedRange: range,
+				newValue: newStatus,
+				rowIndex: rowIndex
+			});
+		} else {
+			throw new Error(`Google Sheets API returned status ${response.status}`);
+		}
 
 	} catch (error) {
 		console.error('Error in update-status API:', error);
 		return json({ 
 			error: error.message || 'Failed to update status',
-			success: false 
+			success: false,
+			stack: error.stack
 		}, { status: 500 });
 	}
 }

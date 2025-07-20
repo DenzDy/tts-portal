@@ -2,8 +2,8 @@
 import { redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 
-const GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID || '1086401218208-ir4p7valglcaf22r2aiav0hls82fgcgo.apps.googleusercontent.com';
-const GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET || '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';
+const GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = 'http://localhost:5173/auth/google/callback';
 
 async function exchangeCodeForTokens(code: string) {

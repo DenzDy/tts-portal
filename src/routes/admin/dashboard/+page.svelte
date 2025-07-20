@@ -5,74 +5,102 @@
 
   let search = '';
 
-  async function updateStatus(res, newStatus) {
-    console.log('updateStatus called with:', { res, newStatus });
+  // Fix the rowIndex issue by ensuring it's properly set
+  $: if (reservations && reservations.length > 0) {
+    reservations = reservations.map((res, index) => ({
+      ...res,
+      rowIndex: res.rowIndex || (index + 2) // Fallback calculation
+    }));
+  }
+
+  // Function to format date properly
+  function formatDate(dateString) {
+    if (!dateString || dateString === 'N/A') return 'N/A';
     
-    const confirmed = confirm(`Are you sure you want to mark "${res.activity}" as "${newStatus}"?`);
+    try {
+      const date = new Date(dateString);
+      // Check if date is valid
+      if (isNaN(date.getTime())) return dateString;
+      
+      // Format as MM/DD/YYYY
+      const month = date.getMonth() + 1; // getMonth() returns 0-11
+      const day = date.getDate();
+      const year = date.getFullYear();
+      
+      return `${month}/${day}/${year}`;
+    } catch (error) {
+      return dateString; // Return original if parsing fails
+    }
+  }
+
+  async function updateStatus(res, newStatus) {
+    console.log('=== BUTTON CLICKED ===');
+    console.log('Full object:', res);
+    console.log('rowIndex:', res.rowIndex);
+    
+    // Use a fallback rowIndex calculation if it's still undefined
+    let actualRowIndex = res.rowIndex;
+    if (!actualRowIndex) {
+      // Find the index in the array and calculate row number
+      const arrayIndex = reservations.findIndex(r => r.activity === res.activity && r.status === res.status);
+      actualRowIndex = arrayIndex + 2;
+      console.log('Calculated fallback rowIndex:', actualRowIndex);
+    }
+    
+    if (!actualRowIndex || actualRowIndex < 2) {
+      alert(`Still can't determine row index. Array index calculation failed.`);
+      return;
+    }
+    
+    const confirmed = confirm(`Update "${res.activity}" to "${newStatus}"?`);
     if (!confirmed) return;
 
     try {
       const requestData = { 
-        rowIndex: res.rowIndex, 
+        rowIndex: parseInt(actualRowIndex),
         newStatus: newStatus
       };
       
-      console.log('Sending request with data:', requestData);
+      console.log('Sending:', requestData);
 
       const response = await fetch('/api/gsheet/update-status', {
         method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-
       const result = await response.json();
-      console.log('Response body:', result);
 
       if (response.ok && result.success) {
-        // Update the local state
         res.status = newStatus;
-        // Force reactivity by reassigning the array
         reservations = [...reservations];
-        alert(`Status updated to "${newStatus}" successfully!`);
+        alert(`Updated to "${newStatus}"!`);
       } else {
-        console.error('Update failed:', result);
-        alert(`Failed to update status: ${result.error || 'Unknown error'}\n\nDetails: ${JSON.stringify(result, null, 2)}`);
+        alert(`Failed: ${result.error}`);
       }
     } catch (error) {
-      console.error('Error updating status:', error);
-      alert(`Network error: ${error.message}`);
+      alert(`Error: ${error.message}`);
     }
   }
 
   async function logout() {
-    const response = await fetch('/admin/logout', {
-      method: 'POST'
-    });
-    
-    if (response.redirected) {
-      window.location.href = response.url;
-    }
+    const response = await fetch('/admin/logout', { method: 'POST' });
+    if (response.redirected) window.location.href = response.url;
   }
 
+  // Fixed search filter - now searches the formatted date instead of raw date
   $: filtered = reservations.filter(r => {
+    if (!search) return true;
     const lowerSearch = search.toLowerCase();
+    const formattedDate = formatDate(r.date).toLowerCase(); // Use formatted date for search
+    
     return (
-      r.activity.toLowerCase().includes(lowerSearch) ||
-      new Date(r.date).toLocaleDateString().includes(lowerSearch) ||
-      r.status.toLowerCase().includes(lowerSearch)
+      r.activity?.toLowerCase().includes(lowerSearch) ||
+      formattedDate.includes(lowerSearch) || // Search formatted date (8/10/2025)
+      r.date?.toLowerCase().includes(lowerSearch) || // Also search raw date (in case someone searches 2025-08)
+      r.status?.toLowerCase().includes(lowerSearch)
     );
   });
-
-  // Debug: Log reservations data on component mount
-  $: {
-    console.log('Current reservations data:', reservations);
-    console.log('Sample reservation:', reservations[0]);
-  }
 </script>
 
 <div class="header">
@@ -93,7 +121,7 @@
   />
 
   {#if filtered.length === 0}
-    <p style="text-align: center;">No matching reservations found.</p>
+    <p style="text-align: center; padding: 2rem;">No reservations found.</p>
   {:else}
     <table>
       <thead>
@@ -102,13 +130,12 @@
           <th>Activity Name</th>
           <th>Status</th>
           <th>Action</th>
-          <th>Debug Info</th> <!-- Temporary debug column -->
         </tr>
       </thead>
       <tbody>
-        {#each filtered as res}
+        {#each filtered as res, index}
           <tr>
-            <td>{new Date(res.date).toLocaleDateString()}</td>
+            <td>{formatDate(res.date)}</td>
             <td>{res.activity}</td>
             <td>
               <span class={
@@ -120,14 +147,15 @@
             </td>
             <td>
               {#if res.status === 'Pending'}
-                <button class="action-button accept" on:click={() => updateStatus(res, 'Approved')}>Accept</button>
-                <button class="action-button reject" on:click={() => updateStatus(res, 'Rejected')}>Reject</button>
+                <button class="action-button accept" on:click={() => updateStatus(res, 'Approved')}>
+                  Accept
+                </button>
+                <button class="action-button reject" on:click={() => updateStatus(res, 'Rejected')}>
+                  Reject
+                </button>
               {:else}
                 <span class="no-action">No action available</span>
               {/if}
-            </td>
-            <td style="font-size: 0.8em; color: #666;">
-              Row: {res.rowIndex}
             </td>
           </tr>
         {/each}
@@ -223,9 +251,9 @@
     font-family: 'Garet', sans-serif;
   }
 
-  .approved { color: green; }
-  .rejected { color: red; }
-  .pending { color: orange; }
+  .approved { color: green; font-weight: bold; }
+  .rejected { color: red; font-weight: bold; }
+  .pending { color: orange; font-weight: bold; }
 
   .action-button {
     cursor: pointer;
@@ -239,26 +267,11 @@
     padding: 0.25rem 0.5rem;
   }
 
-  .accept { 
-    color: green; 
-  }
+  .accept { color: green; }
+  .accept:hover { background-color: rgba(0, 128, 0, 0.1); border-radius: 4px; }
   
-  .accept:hover {
-    background-color: rgba(0, 128, 0, 0.1);
-    border-radius: 4px;
-  }
+  .reject { color: red; }
+  .reject:hover { background-color: rgba(255, 0, 0, 0.1); border-radius: 4px; }
   
-  .reject { 
-    color: red; 
-  }
-  
-  .reject:hover {
-    background-color: rgba(255, 0, 0, 0.1);
-    border-radius: 4px;
-  }
-  
-  .no-action { 
-    font-style: italic; 
-    color: gray; 
-  }
+  .no-action { font-style: italic; color: gray; }
 </style>
