@@ -1,3 +1,4 @@
+<!-- src/routes/admin/dashboard/+page.svelte -->
 <script>
   export let data;
   const { adminSession } = data;
@@ -136,7 +137,11 @@
         {#each filtered as res, index}
           <tr>
             <td>{formatDate(res.date)}</td>
-            <td>{res.activity}</td>
+            <td>
+              <a href="/admin/reservation/{res.rowIndex}" class="activity-link">
+                {res.activity}
+              </a>
+            </td>
             <td>
               <span class={
                 res.status === 'Approved' ? 'approved' :
@@ -220,6 +225,23 @@
     width: 90%;
     margin: 0 auto;
     font-family: 'Garet', sans-serif;
+    max-height: calc(100vh - 200px);
+    overflow-y: scroll;
+    scrollbar-width: thin;
+  }
+
+  .dashboard-container::-webkit-scrollbar {
+    width: 12px;
+    display: block;
+  }
+
+  .dashboard-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .dashboard-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 6px;
   }
 
   .search-bar {
@@ -251,6 +273,16 @@
     font-family: 'Garet', sans-serif;
   }
 
+  .activity-link {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .activity-link:hover {
+    color: #0056b3;
+  }
+
   .approved { color: green; font-weight: bold; }
   .rejected { color: red; font-weight: bold; }
   .pending { color: orange; font-weight: bold; }
@@ -274,4 +306,23 @@
   .reject:hover { background-color: rgba(255, 0, 0, 0.1); border-radius: 4px; }
   
   .no-action { font-style: italic; color: gray; }
+
+  /* Custom scrollbar */
+  .dashboard-container::-webkit-scrollbar {
+    width: 12px;
+    display: block;
+  }
+
+  .dashboard-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .dashboard-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 6px;
+  }
+
+  .dashboard-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
 </style>
