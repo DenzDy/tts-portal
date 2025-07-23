@@ -42,7 +42,7 @@
 			<NavItem link='/#zones' name='Zones' onClick={closeMenu} />
 			<NavItem link='/#recent-events' name='Recent Events' onClick={closeMenu} />
 			<NavItem link='/#contact-us' name='Contact Us' onClick={closeMenu} />
-			<NavItem link='/reserve' name='Reservations' onClick={closeMenu} />
+			<NavItem link='/reserve' name="Reserve" itemClass={['text-orange']} onClick={closeMenu} />
 		</div>
 	{/if}
 
@@ -60,6 +60,6 @@
 		<NavItem link='/#zones' name='Zones' onClick={closeMenu} />
 		<NavItem link='/#recent-events' name='Recent Events' onClick={closeMenu} />
 		<NavItem link='/#contact-us' name='Contact Us' onClick={closeMenu} />
-		<NavItem link='/reserve' name='Reservations' onClick={closeMenu} />
+		<NavItem link='/reserve' name="Reserve" itemClass={['text-orange']} onClick={closeMenu} />
 	</div>
 </nav>

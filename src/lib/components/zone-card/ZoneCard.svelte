@@ -1,5 +1,5 @@
 <script>
-    export let zoneName, zoneColor, zoneDescription;
+	export let zoneName, zoneColor, zoneDescription;
 </script>
 
 <div class="flex flex-row gap-5 items-center w-[80%] sm:w-1/3 sm:flex-col">
