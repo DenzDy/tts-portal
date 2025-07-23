@@ -26,7 +26,7 @@
 	const closeMenu = () => (open = false);
 </script>
 
-<nav class="sticky top-0 bg-primary w-screen h-[55px] sm:h-[80px] p-3 box-border sm:items-center sm:justify-between sm:px-5 sm:flex sm:flex-row">
+<nav class="sticky z-99 top-0 bg-primary w-screen h-[55px] sm:h-[80px] p-3 box-border sm:items-center sm:justify-between sm:px-5 sm:flex sm:flex-row">
 	<button class="align-bottom sm:hidden" onclick={() => open = !open}>
 		{#if !open}
 			<Menu size={32} strokeWidth={3} />
@@ -36,7 +36,7 @@
 	</button>
 
 	{#if open}
-		<div class="left-0 absolute z-[999] sm:hidden mt-2 flex flex-col bg-primary w-full" transition:slide>
+		<div class="left-0 absolute z-20 sm:hidden mt-2 flex flex-col bg-primary w-full" transition:slide>
 			<NavItem link='/#hero' name='Home' onClick={closeMenu} />
 			<NavItem link='/#about-us' name='About Us' onClick={closeMenu} />
 			<NavItem link='/#zones' name='Zones' onClick={closeMenu} />
