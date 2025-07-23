@@ -1,6 +1,8 @@
 <script lang="ts">
 	import '../app.css';
     import Nav from '$lib/components/nav/Nav.svelte';
+    import Footer from '$lib/components/footer/Footer.svelte';
+
     let scrollContainer: HTMLElement | undefined = $state();
     const { children } = $props();
     let open = $state(false);
@@ -26,4 +28,6 @@
 <Nav scrollContainer={scrollContainer}/>
 <main bind:this={scrollContainer} class="bg-primary h-[calc(100vh-55px)] sm:h-[calc(100vh-80px)] overflow-y overflow-auto snap-y snap-mandatory">
     {@render children()}
+    <Footer/>
 </main>
+
