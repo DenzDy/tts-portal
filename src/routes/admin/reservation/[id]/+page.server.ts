@@ -52,6 +52,16 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
       reservationByHeader[header] = reservationRow[index] || '';
     });
     
+    // FIXED: Get the correct status from column A (index 0) which is "Approved?"
+    const actualStatus = reservationRow[0] || 'Pending';
+    console.log('Raw status from column A:', actualStatus);
+    
+    // Create the fixed reservation object with correct status
+    const reservation: Record<string, any> = {
+      'status': actualStatus,  // Use the actual status from column A
+      'Approved?': actualStatus  // Also set this for consistency
+    };
+    
     console.log('Found reservation by header:', reservationByHeader);
     console.log('Available headers:', Object.keys(reservationByHeader));
     
@@ -88,18 +98,10 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
         'signedAAF': 'signed AAF GDrive Link',
       };
       
-      // Log available headers for debugging
-      console.log('\n=== FIELD MAPPING DEBUG ===');
-      console.log('Field:', fieldName);
-      console.log('Expected header:', fieldMapping[fieldName] || fieldName);
-      console.log('Available headers:', headers);
-      
-      // Return mapped header name or fallback to original field name
       return fieldMapping[fieldName] || fieldName;
     }
     
-    // Create properly mapped reservation object
-    const reservation: Record<string, any> = {};
+    // Map all form fields to their values
     formFields.forEach(field => {
       const expectedHeader = mapFieldNameToHeader(field.Name);
       
@@ -130,35 +132,26 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
       }
       
       reservation[field.Name] = fieldValue || '';
-      
-      // Debug individual field mapping
-      console.log(`Field mapping: ${field.Name} -> "${expectedHeader}" = "${fieldValue || 'EMPTY'}"`);
     });
     
-    // Special handling for the problematic fields (program flow, setup team, signed AAF)
-    // Let's check the extended columns manually
+    // Special handling for the extended columns
     console.log('\n=== EXTENDED COLUMNS CHECK ===');
-    console.log('Headers length:', headers.length);
-    for (let i = 26; i < headers.length; i++) { // Starting from column AA (index 26)
+    for (let i = 26; i < headers.length; i++) {
       const header = headers[i];
       const value = reservationRow[i];
-      console.log(`Column ${i} (${String.fromCharCode(65 + Math.floor(i/26) - 1)}${String.fromCharCode(65 + (i%26))}): "${header}" = "${value}"`);
       
-      // Manual mapping for the missing fields
       if (header && header.toLowerCase().includes('program flow')) {
         reservation['programFlow'] = value || '';
-        console.log('✅ Found program flow:', value);
       }
       if (header && header.toLowerCase().includes('set-up team')) {
         reservation['setupTeam'] = value || '';
-        console.log('✅ Found setup team:', value);
       }
       if (header && header.toLowerCase().includes('signed aaf')) {
         reservation['signedAAF'] = value || '';
-        console.log('✅ Found signed AAF:', value);
       }
     }
     
+    console.log('Final reservation status:', reservation.status);
     console.log('Final mapped reservation:', reservation);
     
     return {

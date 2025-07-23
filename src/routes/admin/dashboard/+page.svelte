@@ -152,8 +152,8 @@
             </td>
             <td>
               {#if res.status === 'Pending'}
-                <button class="action-button accept" on:click={() => updateStatus(res, 'Approved')}>
-                  Accept
+                <button class="action-button approve" on:click={() => updateStatus(res, 'Approved')}>
+                  Approve
                 </button>
                 <button class="action-button reject" on:click={() => updateStatus(res, 'Rejected')}>
                   Reject
@@ -299,8 +299,8 @@
     padding: 0.25rem 0.5rem;
   }
 
-  .accept { color: green; }
-  .accept:hover { background-color: rgba(0, 128, 0, 0.1); border-radius: 4px; }
+  .approve { color: green; }
+  .approve:hover { background-color: rgba(0, 128, 0, 0.1); border-radius: 4px; }
   
   .reject { color: red; }
   .reject:hover { background-color: rgba(255, 0, 0, 0.1); border-radius: 4px; }

@@ -39,9 +39,11 @@
 		};
 	});
 
-	// Debug the reservation data
+	// FIXED: Get the correct status - use reservation.status which we set correctly in the server
+	$: currentStatus = reservation.status || reservation['Approved?'] || 'Pending';
+	
+	console.log('Current status in component:', currentStatus);
 	console.log('Full reservation data:', reservation);
-	console.log('Form fields:', formFields);
 
 	// Helper function to format values for display
 	function formatValue(value: any, type: string): string {
@@ -97,13 +99,13 @@
 <div class="mx-auto my-8 w-5/6 md:w-1/2">
 	<h2 class="text-center text-3xl font-bold mb-4">Reservation #{reservationId}</h2>
 	
-	<!-- Status Badge -->
+	<!-- FIXED: Status Badge - now uses the correct status -->
 	<div class="text-center mb-6">
 		<span class={
-			reservation['Approved?'] === 'Approved' ? 'status-badge approved' :
-			reservation['Approved?'] === 'Rejected' ? 'status-badge rejected' : 'status-badge pending'
+			currentStatus === 'Approved' ? 'status-badge approved' :
+			currentStatus === 'Rejected' ? 'status-badge rejected' : 'status-badge pending'
 		}>
-			{reservation['Approved?'] || 'Pending'}
+			{currentStatus}
 		</span>
 	</div>
 
