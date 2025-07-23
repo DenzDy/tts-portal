@@ -24,6 +24,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </svelte:head>
 <Nav scrollContainer={scrollContainer}/>
-<main bind:this={scrollContainer} class="bg-primary h-[calc(90vh)] sm:h-[calc(100vh-80px)] overflow-y overflow-auto snap-y snap-mandatory">
+<main bind:this={scrollContainer} class="bg-primary h-[calc(100vh-55px)] sm:h-[calc(100vh-80px)] overflow-y overflow-auto snap-y snap-mandatory">
     {@render children()}
 </main>

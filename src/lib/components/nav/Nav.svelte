@@ -26,7 +26,7 @@
 	const closeMenu = () => (open = false);
 </script>
 
-<nav class="sticky top-0 bg-primary w-screen h-[10vh] sm:h-[80px] p-3 box-border sm:items-center sm:justify-between sm:px-5 sm:flex sm:flex-row">
+<nav class="sticky top-0 bg-primary w-screen h-[55px] sm:h-[80px] p-3 box-border sm:items-center sm:justify-between sm:px-5 sm:flex sm:flex-row">
 	<button class="align-bottom sm:hidden" onclick={() => open = !open}>
 		{#if !open}
 			<Menu size={32} strokeWidth={3} />

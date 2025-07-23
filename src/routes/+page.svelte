@@ -107,7 +107,7 @@
 		collaborative learning, and community-building.
 	</p>
 	<div class="hidden w-[50%] sm:flex sm:flex-col sm:gap-16">
-		<h1 class="text-primary font-[League_Spartan] text-[3rem]/10 font-semibold sm:text-[4rem]">
+		<h1 class="text-primary font-[League_Spartan] text-[3rem]/16 font-semibold sm:text-[4rem]">
 			about the third space.
 		</h1>
 		<p

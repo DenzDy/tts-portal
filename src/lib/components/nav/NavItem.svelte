@@ -14,7 +14,7 @@
 		'py-4',
 		'sm:px-1',
 		'font-[League_Spartan]',
-		'text-[1.25rem] sm:text-[1rem]',
+		'text-[1.25rem] sm:text-[1.1rem] md:text-[1.25rem]',
 		'font-semibold',
 		itemClass
 	)}
