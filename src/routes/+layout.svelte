@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
     import Nav from '$lib/components/nav/Nav.svelte';
-    let scrollContainer: HTMLElement;
+    let scrollContainer: HTMLElement | undefined = $state();
     const { children } = $props();
     let open = $state(false);
 </script>
@@ -14,6 +14,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </svelte:head>
 <Nav scrollContainer={scrollContainer}/>
-<main bind:this={scrollContainer} class="bg-primary h-[calc(100vh-56px)] sm:h-[calc(100vh-80px)] overflow-y overflow-auto snap-y snap-mandatory">
+<main bind:this={scrollContainer} class="bg-primary h-[calc(90vh)] sm:h-[calc(100vh-80px)] overflow-y overflow-auto snap-y snap-mandatory">
     {@render children()}
 </main>

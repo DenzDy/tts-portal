@@ -82,7 +82,7 @@
 </div>
 <div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3 sm:px-8 sm:py-8">
     <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary sm:text-[4rem] font-semibold">the three zones.</h1>
-    <div class="flex flex-col items-center gap-7 sm:flex sm:flex-row sm:w-full sm:justify-center sm:items-start sm:gap-16">
+    <div class="flex flex-col items-center gap-7 sm:flex sm:flex-row sm:w-full sm:justify-evenly sm:gap-2 sm:items-start">
         <ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
         <ZoneCard zoneName="blue" zoneColor="blue" zoneDescription="interaction of peers and friends — mindful conversations and discussions"/>
         <ZoneCard zoneName="green" zoneColor="green" zoneDescription="different wellness activities and learning opportunities"/>    

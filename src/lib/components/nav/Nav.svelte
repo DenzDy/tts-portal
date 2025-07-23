@@ -3,8 +3,8 @@
 	import { X, Menu } from '@lucide/svelte';
 	import { slide } from 'svelte/transition';
 	import NavItem from '$lib/components/nav/NavItem.svelte';
-	import desktopLogo from '$lib/static/images/desktop-logo.png';
-
+	// import desktopLogo from '$lib/static/images/desktop-logo.png';
+	import mobileLogo from '$lib/static/images/mobile-logo.png';
 	let open = $state(false);
 	let showImage = $state(false);
 
@@ -26,7 +26,7 @@
 	const closeMenu = () => (open = false);
 </script>
 
-<nav class="sticky top-0 bg-primary w-screen h-[56px] sm:h-[80px] p-3 box-border sm:items-center sm:justify-between sm:px-5 sm:flex sm:flex-row">
+<nav class="sticky top-0 bg-primary w-screen h-[10vh] sm:h-[80px] p-3 box-border sm:items-center sm:justify-between sm:px-5 sm:flex sm:flex-row">
 	<button class="align-bottom sm:hidden" onclick={() => open = !open}>
 		{#if !open}
 			<Menu size={32} strokeWidth={3} />
@@ -48,7 +48,7 @@
 
 	<!-- Show/hide logo based on scroll -->
 	<img
-		src={desktopLogo}
+		src={mobileLogo}
 		alt=""
 		class="hidden sm:block h-full transition-opacity duration-300 opacity-0"
 		class:opacity-100={showImage}
