@@ -9,22 +9,22 @@ import { json } from '@sveltejs/kit';
 import { google } from 'googleapis';
 
 export async function load(event) {
-	const { schema, reservationFields } = await getReservationSchema(event.fetch);
+    const { schema, reservationFields } = await getReservationSchema(event.fetch);
 
     const form = await superValidate(zod(schema));
-    
-	return {
+
+    return {
         form,
-		reservationFields,
+        reservationFields,
         calendarSource: env.CALENDAR_LINK || CALENDAR_LINK
-	};
+    };
 }
 
-function joinLists(elem){
-	if(Array.isArray(elem)){
-		return elem.join('; ');
-	}
-	return elem;
+function joinLists(elem) {
+    if (Array.isArray(elem)) {
+        return elem.join('; ');
+    }
+    return elem;
 }
 
 function convertToRFC3339WithTime(dateStr, timeStr, offset = '+08:00') {
@@ -62,23 +62,21 @@ function convertToRFC3339WithTime(dateStr, timeStr, offset = '+08:00') {
 }
 
 export const actions = {
-	default: async (event) => {
+    default: async (event) => {
         const { schema } = await getReservationSchema(event.fetch);
-		let form = await superValidate(event.request, zod(schema));
-        
-		if (!form?.valid) {
-            console.log('hi there.');
+        let form = await superValidate(event.request, zod(schema));
+
+        if (!form?.valid) {
             if (form.data.schedEvent instanceof Date) {
-                 form.data.schedEvent = form.data.schedEvent.toISOString().split('T')[0]; // "YYYY-MM-DD"
+                form.data.schedEvent = form.data.schedEvent.toISOString().split('T')[0]; // "YYYY-MM-DD"
             }
-			return fail(400, { form });
-		}
+            return fail(400, { form });
+        }
 
         const calendarId = env.CALENDAR_ID || CALENDAR_ID;
-        
+
         let values = Object.values(form.data);
-        console.log(Object.entries(form.data));
-		values = values.map(joinLists);
+        values = values.map(joinLists);
 
         const serviceAccount = JSON.parse(env.GOOGLE_SERVICE_ACCOUNT || GOOGLE_SERVICE_ACCOUNT);
         const auth = new google.auth.GoogleAuth({
@@ -134,7 +132,7 @@ export const actions = {
             const startTime = new Date(start);
             const endTime = new Date(end);
             let timeSlotEndErrors = form?.errors?.timeSlotEnd ?? [];
-            if (start >= end){
+            if (start >= end) {
                 timeSlotEndErrors.push("Start time must not occur after the end time.");
                 form.errors.timeSlotEnd = timeSlotEndErrors;
             }
@@ -145,7 +143,7 @@ export const actions = {
             return fail(400, { form });
         }
 
-        
+
         const res = await event.fetch("/api/gsheet", {
             method: 'POST',
             headers: {
@@ -158,9 +156,8 @@ export const actions = {
         });
 
         const result = await res.json();
-        console.log(result);
         if ((result?.status === 200) && (result?.statusText === "OK")) {
             throw redirect(303, "/reserve?toast=Successfully+submitted+form!&type=success");
         }
-	}
+    }
 }

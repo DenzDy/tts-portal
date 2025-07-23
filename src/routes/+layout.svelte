@@ -1,21 +1,32 @@
 <script lang="ts">
 	import '../app.css';
-
-    import { Menu } from '@lucide/svelte';
-    const { children } = $props();
+	import Nav from '$lib/components/nav/Nav.svelte';
+	let scrollContainer: HTMLElement | null = null;
+	const { children } = $props();
+	let open = $state(false);
 </script>
+
 <svelte:head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=League+Spartan:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+		rel="stylesheet"
+	/>
+	<link
+		href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+		rel="stylesheet"
+	/>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=League+Spartan:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+		rel="stylesheet"
+	/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </svelte:head>
-<nav class="sticky top-0 bg-primary w-screen h-fit p-3 box-border">
-    <button class="align-bottom">
-        <Menu size={32} strokeWidth={3} class=""/>
-    </button>
-</nav>
-<main class="bg-primary h-[calc(100vh-56px)] overflow-y overflow-auto snap-y snap-mandatory">
-    {@render children()}
+<Nav container={scrollContainer} />
+<main
+	bind:this={scrollContainer}
+	class="bg-primary overflow-y h-[calc(100vh-56px)] snap-y snap-mandatory overflow-auto sm:h-[calc(100vh-80px)]"
+>
+	{@render children()}
 </main>
