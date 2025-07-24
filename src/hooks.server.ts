@@ -1,4 +1,3 @@
-// src/hooks.server.ts
 import type { Handle } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';

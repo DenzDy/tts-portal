@@ -1,4 +1,3 @@
-// src/routes/api/gsheet/+server.js
 import { google } from 'googleapis';
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
@@ -43,7 +42,7 @@ export async function GET({ url }) {
     const safeTab = targetTab.replace(/'/g, ''); // remove extra quotes
 	const sheets = await getSheetsClient();
 
-	// FIXED: Extended range to include columns beyond Z (up to AZ for safety)
+	// Extended range to include columns beyond Z (up to AZ for safety)
 	// This will fetch columns A through AZ (up to column 52)
 	const res = await sheets.spreadsheets.values.get({
 		spreadsheetId,

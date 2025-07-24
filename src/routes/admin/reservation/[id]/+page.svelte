@@ -1,4 +1,3 @@
-<!-- src/routes/admin/reservation/[id]/+page.svelte -->
 <script lang="ts">
 	import { generateFormFields } from '$lib/form/generateFormField';
 	import type { PageData } from './$types';
@@ -39,7 +38,7 @@
 		};
 	});
 
-	// FIXED: Get the correct status - use reservation.status which we set correctly in the server
+	// Get the correct status - use reservation.status which we set correctly in the server
 	$: currentStatus = reservation.status || reservation['Approved?'] || 'Pending';
 	
 	console.log('Current status in component:', currentStatus);
@@ -85,21 +84,77 @@
 	// Get the equipment rent field value for checking "Others"
 	$: equipmentRentField = renderedFields?.find(field => field.name === 'equipmentRent');
 	$: showOthersField = equipmentRentField ? hasOthersSelected(equipmentRentField.value) : false;
+
+	// Loading states for buttons
+	let approvingReservation = false;
+	let rejectingReservation = false;
+
+	// Function to update reservation status
+	async function updateReservationStatus(newStatus: 'Approved' | 'Rejected') {
+		if (newStatus === 'Approved') {
+			approvingReservation = true;
+		} else {
+			rejectingReservation = true;
+		}
+
+		const confirmed = confirm(`Are you sure you want to change this reservation's status to ${newStatus.toLowerCase()}?`);
+		if (!confirmed) {
+			approvingReservation = false;
+			rejectingReservation = false;
+			return;
+		}
+
+		try {
+			const requestData = { 
+				rowIndex: parseInt(reservationId),
+				newStatus: newStatus
+			};
+			
+			console.log('Sending status update:', requestData);
+
+			const response = await fetch('/api/gsheet/update-status', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(requestData)
+			});
+
+			const result = await response.json();
+
+			if (response.ok && result.success) {
+				// Update the current status
+				reservation.status = newStatus;
+				alert(`Reservation ${newStatus.toLowerCase()} successfully!`);
+				
+				// Optionally redirect back to dashboard after a short delay
+				// setTimeout(() => {
+				//	 window.location.href = '/admin/dashboard';
+				// }, 1500);
+			} else {
+				alert(`Failed to ${newStatus.toLowerCase()} reservation: ${result.error}`);
+			}
+		} catch (error) {
+			console.error('Error updating reservation status:', error);
+			alert(`Error: ${error.message}`);
+		} finally {
+			approvingReservation = false;
+			rejectingReservation = false;
+		}
+	}
 </script>
 
 <div class="header">
 	<h1>View Reservation Details</h1>
 	<div class="user-info">
-		<img src={adminSession?.picture} alt="Profile" class="profile-pic" />
-		<span class="user-email">{adminSession?.email}</span>
+		<!-- <img src={adminSession?.picture} alt="Profile" class="profile-pic" /> -->
+		<!-- <span class="user-email">{adminSession?.email}</span> -->
 		<a href="/admin/dashboard" class="back-btn">Back to Dashboard</a>
 	</div>
 </div>
 
 <div class="mx-auto my-8 w-5/6 md:w-1/2">
-	<h2 class="text-center text-3xl font-bold mb-4">Reservation #{reservationId}</h2>
+	<h2 class="text-center text-3xl font-bold mb-4">Reservation #{reservationId - 1}</h2>
 	
-	<!-- FIXED: Status Badge - now uses the correct status -->
+	<!-- Status Badge -->
 	<div class="text-center mb-6">
 		<span class={
 			currentStatus === 'Approved' ? 'status-badge approved' :
@@ -168,10 +223,43 @@
 		{/each}
 	</div>
 	
-	<!-- Additional Actions Section (for future use) -->
-	<div class="actions-section mt-8">
-		<!-- Actions will be added here later -->
-	</div>
+	<!-- Action Buttons Section - Only show if status is Pending -->
+	{#if currentStatus === 'Pending'}
+		<div class="my-4 flex w-full gap-2">
+			<button 
+				class="action-button approve-button w-1/2" 
+				on:click={() => updateReservationStatus('Approved')}
+				disabled={approvingReservation || rejectingReservation}
+			>
+				{#if approvingReservation}
+					<span class="loader approve-loader"></span>
+					Approving...
+				{:else}
+					Approve
+				{/if}
+			</button>
+			<button 
+				class="action-button reject-button w-1/2" 
+				on:click={() => updateReservationStatus('Rejected')}
+				disabled={approvingReservation || rejectingReservation}
+			>
+				{#if rejectingReservation}
+					<span class="loader reject-loader"></span>
+					Rejecting...
+				{:else}
+					Reject
+				{/if}
+			</button>
+		</div>
+	{:else}
+		<!-- Show status message when not pending -->
+		<div class="text-center mt-8">
+			<p class="status-message">
+				This reservation has already been <strong>{currentStatus.toLowerCase()}</strong>.
+			</p>
+			<a href="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -315,9 +403,83 @@
 		color: #0056b3;
 	}
 
-	.actions-section {
-		border-top: 2px solid #e9ecef;
-		padding-top: 1rem;
-		text-align: center;
+	/* Action Buttons Styling - Matching the create form buttons */
+	.action-button {
+		padding: 0.5rem 1.25rem;
+		border-radius: 0.375rem;
+		font-weight: 600;
+		font-size: 1rem;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		text-decoration: none;
+		gap: 0.5rem;
+		border: 2px solid;
+		font-family: 'Garet', sans-serif;
+		transition: all 0.2s ease;
+	}
+
+	.approve-button {
+		background-color: #4caf50;
+		color: white;
+		border-color: #4caf50;
+	}
+
+	.approve-button:hover:not(:disabled) {
+		background-color: #45a049;
+		border-color: #45a049;
+	}
+
+	.reject-button {
+		background-color: #f44336;
+		color: white;
+		border-color: #f44336;
+	}
+
+	.reject-button:hover:not(:disabled) {
+		background-color: #da190b;
+		border-color: #da190b;
+	}
+
+	.action-button:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		filter: grayscale(50%);
+	}
+
+	/* Loading spinner */
+	.loader {
+		border: 3px solid rgba(255, 255, 255, 0.3);
+		border-top: 3px solid white;
+		border-radius: 50%;
+		width: 18px;
+		height: 18px;
+		animation: spin 0.6s linear infinite;
+		margin-right: 0.5rem;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+
+	/* Status message styling */
+	.status-message {
+		font-size: 1.1rem;
+		color: #666;
+		margin-bottom: 1rem;
+		font-family: 'Garet', sans-serif;
+	}
+
+	.back-link {
+		color: #f9943b;
+		text-decoration: none;
+		font-weight: 500;
+		font-family: 'Garet', sans-serif;
+	}
+
+	.back-link:hover {
+		text-decoration: underline;
 	}
 </style>

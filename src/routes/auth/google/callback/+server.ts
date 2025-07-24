@@ -1,4 +1,3 @@
-// src/routes/auth/google/callback/+server.ts
 import { redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 

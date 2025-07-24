@@ -1,4 +1,3 @@
-<!-- src/routes/admin/dashboard/+page.svelte -->
 <script>
   export let data;
   const { adminSession } = data;
@@ -6,7 +5,6 @@
 
   let search = '';
 
-  // Fix the rowIndex issue by ensuring it's properly set
   $: if (reservations && reservations.length > 0) {
     reservations = reservations.map((res, index) => ({
       ...res,
@@ -89,7 +87,6 @@
     if (response.redirected) window.location.href = response.url;
   }
 
-  // Fixed search filter - now searches the formatted date instead of raw date
   $: filtered = reservations.filter(r => {
     if (!search) return true;
     const lowerSearch = search.toLowerCase();
@@ -107,8 +104,8 @@
 <div class="header">
   <h1>Admin Dashboard</h1>
   <div class="user-info">
-    <img src={adminSession?.picture} alt="Profile" class="profile-pic" />
-    <span class="user-email">{adminSession?.email}</span>
+    <!-- <img src={adminSession?.picture} alt="Profile" class="profile-pic" /> -->
+    <!-- <span class="user-email">{adminSession?.email}</span> -->
     <button class="logout-btn" on:click={logout}>Logout</button>
   </div>
 </div>
@@ -159,7 +156,7 @@
                   Reject
                 </button>
               {:else}
-                <span class="no-action">No action available</span>
+                <span class="no-action">Already {res.status}</span>
               {/if}
             </td>
           </tr>

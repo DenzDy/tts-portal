@@ -1,4 +1,3 @@
-// src/routes/admin/reservation/[id]/+page.server.ts
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { loadFormFieldsFromSheet } from '$lib/form/getFields';
@@ -52,7 +51,7 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
       reservationByHeader[header] = reservationRow[index] || '';
     });
     
-    // FIXED: Get the correct status from column A (index 0) which is "Approved?"
+    // Get the correct status from column A (index 0) which is "Approved?"
     const actualStatus = reservationRow[0] || 'Pending';
     console.log('Raw status from column A:', actualStatus);
     
