@@ -132,7 +132,7 @@
 </div>
 <div
 	id="recent-events"
-	class="mt-8 flex w-full snap-start flex-col items-center gap-7 px-3 pt-3 sm:items-start sm:px-8"
+	class="mt-8 flex w-full snap-start flex-col items-center gap-7 px-3 pt-3  sm:px-8"
 >
 	<h1
 		class="text-primary text-center font-[League_Spartan] text-[3rem]/10 font-semibold sm:text-[4rem]"
@@ -145,7 +145,7 @@
 </div>
 <div
 	id="contact-us"
-	class="mt-8 flex w-full snap-start flex-col items-center gap-7 px-3 pt-3 pb-10 sm:items-start sm:px-8"
+	class="mt-8 flex w-full snap-start flex-col items-center gap-7 px-3 pt-3 pb-10  sm:px-8"
 >
 	<h1
 		class="text-primary text-center font-[League_Spartan] text-[3rem]/10 font-semibold sm:text-[4rem]"
