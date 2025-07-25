@@ -1,8 +1,12 @@
 import { redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { dev } from '$app/environment';
 
 const GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID;
-const REDIRECT_URI = 'http://localhost:5173/auth/google/callback';
+
+const REDIRECT_URI = dev 
+  ? 'http://localhost:5173/auth/google/callback'
+  : 'https://thethirdspace.upd.edu.ph/auth/google/callback';
 
 export async function GET({ url }) {
   console.log('Starting Google OAuth redirect...');

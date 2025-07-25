@@ -1,9 +1,13 @@
 import { redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { dev } from '$app/environment';
 
 const GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = 'http://localhost:5173/auth/google/callback';
+
+const REDIRECT_URI = dev 
+  ? 'http://localhost:5173/auth/google/callback'
+  : 'https://thethirdspace.upd.edu.ph/auth/google/callback';
 
 async function exchangeCodeForTokens(code: string) {
   console.log('Exchanging code for tokens...');
@@ -77,6 +81,7 @@ async function checkAdminEmail(email: string, fetch: typeof globalThis.fetch) {
 export async function GET({ url, cookies, fetch }) {
   console.log('OAuth callback started');
   console.log('Full URL:', url.href);
+  console.log('Using redirect URI:', REDIRECT_URI);
   
   const code = url.searchParams.get('code');
   const error = url.searchParams.get('error');
@@ -126,7 +131,7 @@ export async function GET({ url, cookies, fetch }) {
   cookies.set('admin_session', JSON.stringify(sessionData), {
     path: '/',
     httpOnly: true,
-    secure: false, // Set to true in production
+    secure: !dev, // Only secure in production
     sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 7 // 7 days
   });

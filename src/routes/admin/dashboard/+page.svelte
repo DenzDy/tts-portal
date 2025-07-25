@@ -84,7 +84,10 @@
 
   async function logout() {
     const response = await fetch('/admin/logout', { method: 'POST' });
-    if (response.redirected) window.location.href = response.url;
+    if (response.redirected) {
+      // Replace current history entry instead of adding new one
+      window.location.replace(response.url);
+    }
   }
 
   $: filtered = reservations.filter(r => {
