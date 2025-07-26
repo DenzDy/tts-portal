@@ -1,4 +1,5 @@
 <script>
+	import { goto } from '$app/navigation';
 	export let data;
 	let { reservations } = data;
 
@@ -91,6 +92,10 @@
 		}
 	}
 
+	async function goHome() {
+		await goto('/');
+	}
+
 	$: filtered = reservations.filter((r) => {
 		if (!search) return true;
 		const lowerSearch = search.toLowerCase();
@@ -109,6 +114,7 @@
 	<h1>Admin Dashboard</h1>
 	<div class="user-info">
 		<button class="logout-btn" on:click={logout}>Logout</button>
+		<button class="back-home-btn" on:click={goHome}>Back to Home</button>
 	</div>
 </div>
 
@@ -200,6 +206,17 @@
 	.user-email {
 		font-weight: 500;
 		color: #666;
+		font-family: 'Garet', sans-serif;
+	}
+
+	.back-home-btn {
+		background: #f9943b;
+		color: white;
+		border: none;
+		padding: 0.5rem 1rem;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.9rem;
 		font-family: 'Garet', sans-serif;
 	}
 
