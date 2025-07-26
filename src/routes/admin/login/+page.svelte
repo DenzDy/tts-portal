@@ -73,7 +73,7 @@
 
 <style>
 	.login-container {
-		min-height: calc(100vh - 56px); /* Account for navbar height */
+		min-height: calc(100vh - 0px); /* Optional: Account for navbar height */
 		width: 100%;
 		display: flex;
 		align-items: center;
@@ -162,4 +162,12 @@
 			transform: rotate(360deg);
 		}
 	}
+
+	:global(main) {
+		margin: 0 !important;
+		padding: 0 !important;
+		background-color: #f8f9f0 !important;
+		min-height: 100vh !important;
+		height: auto !important;
+	}	
 </style>

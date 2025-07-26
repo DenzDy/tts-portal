@@ -247,23 +247,23 @@
 		width: 90%;
 		margin: 0 auto;
 		font-family: 'Garet', sans-serif;
-		max-height: calc(100vh - 200px);
+		max-height: calc(100vh - 140px);
 		overflow-y: scroll;
 		scrollbar-width: thin;
 	}
 
 	.dashboard-container::-webkit-scrollbar {
 		width: 12px;
-		display: block;
+		display: block;  
 	}
 
 	.dashboard-container::-webkit-scrollbar-track {
-		background: #f1f1f1;
+		background: #f1f1f1; 
 	}
 
 	.dashboard-container::-webkit-scrollbar-thumb {
 		background: #c1c1c1;
-		border-radius: 6px;
+		border-radius: 6px; 
 	}
 
 	.search-bar {
@@ -369,5 +369,13 @@
 
 	.dashboard-container::-webkit-scrollbar-thumb:hover {
 		background: #a8a8a8;
+	}
+
+  :global(main) {
+		margin: 0 !important;
+		padding: 0 !important;
+		background-color: #f8f9f0 !important;
+		min-height: 100vh !important;
+		height: auto !important;
 	}
 </style>
