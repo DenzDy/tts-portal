@@ -1,328 +1,356 @@
 <script>
-  export let data;
-  const { adminSession } = data;
-  let { reservations } = data;
+	export let data;
+	let { reservations } = data;
 
-  let search = '';
+	let search = '';
 
-  $: if (reservations && reservations.length > 0) {
-    reservations = reservations.map((res, index) => ({
-      ...res,
-      rowIndex: res.rowIndex || (index + 2) // Fallback calculation
-    }));
-  }
+	$: if (reservations && reservations.length > 0) {
+		reservations = reservations.map((res, index) => ({
+			...res,
+			rowIndex: res.rowIndex || index + 2 // Fallback calculation
+		}));
+	}
 
-  // Function to format date properly
-  function formatDate(dateString) {
-    if (!dateString || dateString === 'N/A') return 'N/A';
-    
-    try {
-      const date = new Date(dateString);
-      // Check if date is valid
-      if (isNaN(date.getTime())) return dateString;
-      
-      // Format as MM/DD/YYYY
-      const month = date.getMonth() + 1; // getMonth() returns 0-11
-      const day = date.getDate();
-      const year = date.getFullYear();
-      
-      return `${month}/${day}/${year}`;
-    } catch (error) {
-      return dateString; // Return original if parsing fails
-    }
-  }
+	// Function to format date properly
+	function formatDate(dateString) {
+		if (!dateString || dateString === 'N/A') return 'N/A';
 
-  async function updateStatus(res, newStatus) {
-    console.log('=== BUTTON CLICKED ===');
-    console.log('Full object:', res);
-    console.log('rowIndex:', res.rowIndex);
-    
-    // Use a fallback rowIndex calculation if it's still undefined
-    let actualRowIndex = res.rowIndex;
-    if (!actualRowIndex) {
-      // Find the index in the array and calculate row number
-      const arrayIndex = reservations.findIndex(r => r.activity === res.activity && r.status === res.status);
-      actualRowIndex = arrayIndex + 2;
-      console.log('Calculated fallback rowIndex:', actualRowIndex);
-    }
-    
-    if (!actualRowIndex || actualRowIndex < 2) {
-      alert(`Still can't determine row index. Array index calculation failed.`);
-      return;
-    }
-    
-    const confirmed = confirm(`Update "${res.activity}" to "${newStatus}"?`);
-    if (!confirmed) return;
+		try {
+			const date = new Date(dateString);
+			// Check if date is valid
+			if (isNaN(date.getTime())) return dateString;
 
-    try {
-      const requestData = { 
-        rowIndex: parseInt(actualRowIndex),
-        newStatus: newStatus
-      };
-      
-      console.log('Sending:', requestData);
+			// Format as MM/DD/YYYY
+			const month = date.getMonth() + 1; // getMonth() returns 0-11
+			const day = date.getDate();
+			const year = date.getFullYear();
 
-      const response = await fetch('/api/gsheet/update-status', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData)
-      });
+			return `${month}/${day}/${year}`;
+		} catch (error) {
+			return dateString; // Return original if parsing fails
+		}
+	}
 
-      const result = await response.json();
+	async function updateStatus(res, newStatus) {
+		console.log('=== BUTTON CLICKED ===');
+		console.log('Full object:', res);
+		console.log('rowIndex:', res.rowIndex);
 
-      if (response.ok && result.success) {
-        res.status = newStatus;
-        reservations = [...reservations];
-        alert(`Updated to "${newStatus}"!`);
-      } else {
-        alert(`Failed: ${result.error}`);
-      }
-    } catch (error) {
-      alert(`Error: ${error.message}`);
-    }
-  }
+		// Use a fallback rowIndex calculation if it's still undefined
+		let actualRowIndex = res.rowIndex;
+		if (!actualRowIndex) {
+			// Find the index in the array and calculate row number
+			const arrayIndex = reservations.findIndex(
+				(r) => r.activity === res.activity && r.status === res.status
+			);
+			actualRowIndex = arrayIndex + 2;
+			console.log('Calculated fallback rowIndex:', actualRowIndex);
+		}
 
-  async function logout() {
-    const response = await fetch('/admin/logout', { method: 'POST' });
-    if (response.redirected) {
-      // Replace current history entry instead of adding new one
-      window.location.replace(response.url);
-    }
-  }
+		if (!actualRowIndex || actualRowIndex < 2) {
+			alert(`Still can't determine row index. Array index calculation failed.`);
+			return;
+		}
 
-  $: filtered = reservations.filter(r => {
-    if (!search) return true;
-    const lowerSearch = search.toLowerCase();
-    const formattedDate = formatDate(r.date).toLowerCase(); // Use formatted date for search
-    
-    return (
-      r.activity?.toLowerCase().includes(lowerSearch) ||
-      formattedDate.includes(lowerSearch) || // Search formatted date (8/10/2025)
-      r.date?.toLowerCase().includes(lowerSearch) || // Also search raw date (in case someone searches 2025-08)
-      r.status?.toLowerCase().includes(lowerSearch)
-    );
-  });
+		const confirmed = confirm(`Update "${res.activity}" to "${newStatus}"?`);
+		if (!confirmed) return;
+
+		try {
+			const requestData = {
+				rowIndex: parseInt(actualRowIndex),
+				newStatus: newStatus
+			};
+
+			console.log('Sending:', requestData);
+
+			const response = await fetch('/api/gsheet/update-status', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(requestData)
+			});
+
+			const result = await response.json();
+
+			if (response.ok && result.success) {
+				res.status = newStatus;
+				reservations = [...reservations];
+				alert(`Updated to "${newStatus}"!`);
+			} else {
+				alert(`Failed: ${result.error}`);
+			}
+		} catch (error) {
+			alert(`Error: ${error.message}`);
+		}
+	}
+
+	async function logout() {
+		const response = await fetch('/admin/logout', { method: 'POST' });
+		if (response.redirected) {
+			// Replace current history entry instead of adding new one
+			window.location.replace(response.url);
+		}
+	}
+
+	$: filtered = reservations.filter((r) => {
+		if (!search) return true;
+		const lowerSearch = search.toLowerCase();
+		const formattedDate = formatDate(r.date).toLowerCase(); // Use formatted date for search
+
+		return (
+			r.activity?.toLowerCase().includes(lowerSearch) ||
+			formattedDate.includes(lowerSearch) || // Search formatted date (8/10/2025)
+			r.date?.toLowerCase().includes(lowerSearch) || // Also search raw date (in case someone searches 2025-08)
+			r.status?.toLowerCase().includes(lowerSearch)
+		);
+	});
 </script>
 
 <div class="header">
-  <h1>Admin Dashboard</h1>
-  <div class="user-info">
-    <!-- <img src={adminSession?.picture} alt="Profile" class="profile-pic" /> -->
-    <!-- <span class="user-email">{adminSession?.email}</span> -->
-    <button class="logout-btn" on:click={logout}>Logout</button>
-  </div>
+	<h1>Admin Dashboard</h1>
+	<div class="user-info">
+		<button class="logout-btn" on:click={logout}>Logout</button>
+	</div>
 </div>
 
 <div class="dashboard-container">
-  <input
-    type="text"
-    placeholder="Search by date or activity..."
-    bind:value={search}
-    class="search-bar"
-  />
+	<input
+		type="text"
+		placeholder="Search by date or activity..."
+		bind:value={search}
+		class="search-bar"
+	/>
 
-  {#if filtered.length === 0}
-    <p style="text-align: center; padding: 2rem;">No reservations found.</p>
-  {:else}
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Activity Name</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each filtered as res, index}
-          <tr>
-            <td>{formatDate(res.date)}</td>
-            <td>
-              <a href="/admin/reservation/{res.rowIndex}" class="activity-link">
-                {res.activity}
-              </a>
-            </td>
-            <td>
-              <span class={
-                res.status === 'Approved' ? 'approved' :
-                res.status === 'Rejected' ? 'rejected' : 'pending'
-              }>
-                {res.status}
-              </span>
-            </td>
-            <td>
-              {#if res.status === 'Pending'}
-                <button class="action-button approve" on:click={() => updateStatus(res, 'Approved')}>
-                  Approve
-                </button>
-                <button class="action-button reject" on:click={() => updateStatus(res, 'Rejected')}>
-                  Reject
-                </button>
-              {:else}
-                <span class="no-action">Already {res.status}</span>
-              {/if}
-            </td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-  {/if}
+	{#if filtered.length === 0}
+		<p style="text-align: center; padding: 2rem;">No reservations found.</p>
+	{:else}
+		<table>
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Activity Name</th>
+					<th>Status</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each filtered as res, index}
+					<tr>
+						<td>{formatDate(res.date)}</td>
+						<td>
+							<a href="/admin/reservation/{res.rowIndex}" class="activity-link">
+								{res.activity}
+							</a>
+						</td>
+						<td>
+							<span
+								class={res.status === 'Approved'
+									? 'approved'
+									: res.status === 'Rejected'
+										? 'rejected'
+										: 'pending'}
+							>
+								{res.status}
+							</span>
+						</td>
+						<td>
+							{#if res.status === 'Pending'}
+								<button
+									class="action-button approve"
+									on:click={() => updateStatus(res, 'Approved')}
+								>
+									Approve
+								</button>
+								<button class="action-button reject" on:click={() => updateStatus(res, 'Rejected')}>
+									Reject
+								</button>
+							{:else}
+								<span class="no-action">Already {res.status}</span>
+							{/if}
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	{/if}
 </div>
 
 <style>
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-  }
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem 2rem;
+		background: white;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		margin-bottom: 2rem;
+	}
 
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
+	.user-info {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
 
-  .profile-pic {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-  }
+	.profile-pic {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+	}
 
-  .user-email {
-    font-weight: 500;
-    color: #666;
-    font-family: 'Garet', sans-serif;
-  }
+	.user-email {
+		font-weight: 500;
+		color: #666;
+		font-family: 'Garet', sans-serif;
+	}
 
-  .logout-btn {
-    background: #f44336;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-family: 'Garet', sans-serif;
-  }
+	.logout-btn {
+		background: #f44336;
+		color: white;
+		border: none;
+		padding: 0.5rem 1rem;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.9rem;
+		font-family: 'Garet', sans-serif;
+	}
 
-  .logout-btn:hover {
-    background: #d32f2f;
-  }
+	.logout-btn:hover {
+		background: #d32f2f;
+	}
 
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0;
-    color: #333;
-    font-family: 'Garet', sans-serif;
-  }
+	h1 {
+		font-size: 2rem;
+		font-weight: 700;
+		margin: 0;
+		color: #333;
+		font-family: 'Garet', sans-serif;
+	}
 
-  .dashboard-container {
-    width: 90%;
-    margin: 0 auto;
-    font-family: 'Garet', sans-serif;
-    max-height: calc(100vh - 200px);
-    overflow-y: scroll;
-    scrollbar-width: thin;
-  }
+	.dashboard-container {
+		width: 90%;
+		margin: 0 auto;
+		font-family: 'Garet', sans-serif;
+		max-height: calc(100vh - 200px);
+		overflow-y: scroll;
+		scrollbar-width: thin;
+	}
 
-  .dashboard-container::-webkit-scrollbar {
-    width: 12px;
-    display: block;
-  }
+	.dashboard-container::-webkit-scrollbar {
+		width: 12px;
+		display: block;
+	}
 
-  .dashboard-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
+	.dashboard-container::-webkit-scrollbar-track {
+		background: #f1f1f1;
+	}
 
-  .dashboard-container::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 6px;
-  }
+	.dashboard-container::-webkit-scrollbar-thumb {
+		background: #c1c1c1;
+		border-radius: 6px;
+	}
 
-  .search-bar {
-    width: 100%;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-bottom: 1rem;
-    font-family: 'Garet', sans-serif;
-    box-sizing: border-box;
-  }
+	.search-bar {
+		width: 100%;
+		padding: 0.5rem 1rem;
+		font-size: 1rem;
+		border-radius: 6px;
+		border: 1px solid #ccc;
+		margin-bottom: 1rem;
+		font-family: 'Garet', sans-serif;
+		box-sizing: border-box;
+	}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    font-family: 'Garet', sans-serif;
-  }
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		background-color: white;
+		font-family: 'Garet', sans-serif;
+	}
 
-  thead {
-    background-color: #d3d3d3;
-  }
+	thead {
+		background-color: #d3d3d3;
+	}
 
-  th, td {
-    padding: 1rem;
-    border: 1px solid #ccc;
-    text-align: left;
-    font-family: 'Garet', sans-serif;
-  }
+	th,
+	td {
+		padding: 1rem;
+		border: 1px solid #ccc;
+		text-align: left;
+		font-family: 'Garet', sans-serif;
+	}
 
-  .activity-link {
-    color: #007bff;
-    text-decoration: underline;
-    cursor: pointer;
-  }
+	.activity-link {
+		color: #007bff;
+		text-decoration: underline;
+		cursor: pointer;
+	}
 
-  .activity-link:hover {
-    color: #0056b3;
-  }
+	.activity-link:hover {
+		color: #0056b3;
+	}
 
-  .approved { color: green; font-weight: bold; }
-  .rejected { color: red; font-weight: bold; }
-  .pending { color: orange; font-weight: bold; }
+	.approved {
+		color: green;
+		font-weight: bold;
+	}
+	.rejected {
+		color: red;
+		font-weight: bold;
+	}
+	.pending {
+		color: orange;
+		font-weight: bold;
+	}
 
-  .action-button {
-    cursor: pointer;
-    font-weight: bold;
-    background: none;
-    border: none;
-    font-size: 1rem;
-    text-decoration: underline;
-    font-family: 'Garet', sans-serif;
-    margin-right: 0.5rem;
-    padding: 0.25rem 0.5rem;
-  }
+	.action-button {
+		cursor: pointer;
+		font-weight: bold;
+		background: none;
+		border: none;
+		font-size: 1rem;
+		text-decoration: underline;
+		font-family: 'Garet', sans-serif;
+		margin-right: 0.5rem;
+		padding: 0.25rem 0.5rem;
+	}
 
-  .approve { color: green; }
-  .approve:hover { background-color: rgba(0, 128, 0, 0.1); border-radius: 4px; }
-  
-  .reject { color: red; }
-  .reject:hover { background-color: rgba(255, 0, 0, 0.1); border-radius: 4px; }
-  
-  .no-action { font-style: italic; color: gray; }
+	.approve {
+		color: green;
+	}
+	.approve:hover {
+		background-color: rgba(0, 128, 0, 0.1);
+		border-radius: 4px;
+	}
 
-  /* Custom scrollbar */
-  .dashboard-container::-webkit-scrollbar {
-    width: 12px;
-    display: block;
-  }
+	.reject {
+		color: red;
+	}
+	.reject:hover {
+		background-color: rgba(255, 0, 0, 0.1);
+		border-radius: 4px;
+	}
 
-  .dashboard-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
+	.no-action {
+		font-style: italic;
+		color: gray;
+	}
 
-  .dashboard-container::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 6px;
-  }
+	/* Custom scrollbar */
+	.dashboard-container::-webkit-scrollbar {
+		width: 12px;
+		display: block;
+	}
 
-  .dashboard-container::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-  }
+	.dashboard-container::-webkit-scrollbar-track {
+		background: #f1f1f1;
+	}
+
+	.dashboard-container::-webkit-scrollbar-thumb {
+		background: #c1c1c1;
+		border-radius: 6px;
+	}
+
+	.dashboard-container::-webkit-scrollbar-thumb:hover {
+		background: #a8a8a8;
+	}
 </style>
