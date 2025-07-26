@@ -2,10 +2,16 @@
 	import '../app.css';
 	import Nav from '$lib/components/nav/Nav.svelte';
 	import Footer from '$lib/components/footer/Footer.svelte';
+	import { page } from '$app/stores';
+	import { derived } from 'svelte/store';
 
-	let scrollContainer: HTMLElement | undefined = $state();
+	let scrollContainer: HTMLElement | null = $state(null);
 	const { children } = $props();
 	let open = $state(false);
+
+	// Only show Nav on these routes
+	const showNavRoutes = ['/', '/about', '/dashboard']; // Adjust as needed
+	const showNav = derived(page, ($page) => showNavRoutes.includes($page.url.pathname));
 </script>
 
 <svelte:head>
@@ -17,7 +23,11 @@
 	/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </svelte:head>
-<Nav {scrollContainer} />
+
+{#if $showNav}
+	<Nav {scrollContainer} />
+{/if}
+
 <main
 	bind:this={scrollContainer}
 	class="bg-primary overflow-y h-[calc(100vh-55px)] snap-y snap-mandatory overflow-auto sm:h-[calc(100vh-80px)]"
