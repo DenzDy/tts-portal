@@ -59,7 +59,8 @@
 		try {
 			const requestData = {
 				rowIndex: parseInt(actualRowIndex),
-				newStatus: newStatus
+				newStatus: newStatus,
+				fromDashboard: true // Flag to indicate this is from dashboard
 			};
 
 			console.log('Sending:', requestData);
@@ -75,7 +76,7 @@
 			if (response.ok && result.success) {
 				res.status = newStatus;
 				reservations = [...reservations];
-				alert(`Updated to "${newStatus}"!`);
+				alert(`Updated to "${newStatus}"! Cost set to ₱0 for dashboard approval.`);
 			} else {
 				alert(`Failed: ${result.error}`);
 			}

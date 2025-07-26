@@ -88,6 +88,55 @@
 	// Loading states for buttons
 	let approvingReservation = false;
 	let rejectingReservation = false;
+	let savingCosts = false;
+
+	// Cost fields - initialize from reservation data
+	let costBreakdown = reservation['Cost Breakdown'] || '';
+	let actualTotal = parseFloat(reservation['Actual Total']) || 0;
+
+	// Debug logging stuff
+	console.log('=== COST FIELD INITIALIZATION ===');
+	console.log('reservation[Cost Breakdown]:', reservation['Cost Breakdown']);
+	console.log('reservation[Actual Total]:', reservation['Actual Total']);
+	console.log('costBreakdown variable:', costBreakdown);
+	console.log('actualTotal variable:', actualTotal);
+
+	// Function to save cost changes
+	async function saveCostChanges() {
+		savingCosts = true;
+
+		try {
+			const requestData = { 
+				rowIndex: parseInt(reservationId),
+				costBreakdown: costBreakdown,
+				actualTotal: parseFloat(actualTotal) || 0
+			};
+			
+			console.log('Sending cost update:', requestData);
+
+			const response = await fetch('/api/gsheet/update-cost', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(requestData)
+			});
+
+			const result = await response.json();
+
+			if (response.ok && result.success) {
+				// Update the local reservation data
+				reservation['Cost Breakdown'] = costBreakdown;
+				reservation['Actual Total'] = actualTotal;
+				alert('Cost information saved successfully!');
+			} else {
+				alert(`Failed to save cost information: ${result.error}`);
+			}
+		} catch (error) {
+			console.error('Error saving cost information:', error);
+			alert(`Error: ${error.message}`);
+		} finally {
+			savingCosts = false;
+		}
+	}
 
 	// Function to update reservation status
 	async function updateReservationStatus(newStatus: 'Approved' | 'Rejected') {
@@ -107,7 +156,8 @@
 		try {
 			const requestData = { 
 				rowIndex: parseInt(reservationId),
-				newStatus: newStatus
+				newStatus: newStatus,
+				fromDashboard: false // Flag to indicate this is from details page
 			};
 			
 			console.log('Sending status update:', requestData);
@@ -221,6 +271,56 @@
 				{/if}
 			{/if}
 		{/each}
+	</div>
+
+	<!-- Cost Fields Section -->
+	<div class="cost-fields-section">
+		<h3 class="cost-section-title">Cost Information</h3>
+		
+		<div class="field-container">
+			<label class="field-label">
+				Cost Breakdown
+			</label>
+			<textarea
+				bind:value={costBreakdown}
+				placeholder="Enter cost breakdown (e.g., Projector: 100&#10;Chairs: 50&#10;Setup fee: 25)"
+				class="cost-textarea"
+				rows="4"
+			></textarea>
+			<p class="field-helper">
+				Enter each item on a new line in the format "Item: Cost"
+			</p>
+		</div>
+
+		<div class="field-container">
+			<label class="field-label">
+				Actual Total (₱)
+			</label>
+			<input
+				type="number"
+				bind:value={actualTotal}
+				placeholder="0"
+				class="cost-input"
+				min="0"
+				step="0.01"
+			/>
+			<p class="field-helper">
+				Total amount to be paid by the user
+			</p>
+		</div>
+
+		<button 
+			class="save-changes-button" 
+			on:click={saveCostChanges}
+			disabled={savingCosts}
+		>
+			{#if savingCosts}
+				<span class="loader save-loader"></span>
+				Saving Changes...
+			{:else}
+				Save Changes
+			{/if}
+		</button>
 	</div>
 	
 	<!-- Action Buttons Section - Only show if status is Pending -->
@@ -401,6 +501,73 @@
 
 	.file-link:hover {
 		color: #0056b3;
+	}
+
+	/* Cost Fields Styling */
+	.cost-fields-section {
+		margin: 2rem 0;
+		padding: 1.5rem;
+		background: #f8f9fa;
+		border: 2px solid #e9ecef;
+		border-radius: 8px;
+		font-family: 'Garet', sans-serif;
+	}
+
+	.cost-section-title {
+		font-size: 1.5rem;
+		font-weight: bold;
+		color: #333;
+		margin-bottom: 1rem;
+		font-family: 'Garet', sans-serif;
+	}
+
+	.cost-textarea {
+		width: 100%;
+		padding: 0.75rem;
+		border: 1px solid #ced4da;
+		border-radius: 4px;
+		font-family: 'Garet', sans-serif;
+		font-size: 0.95rem;
+		resize: vertical;
+		min-height: 100px;
+	}
+
+	.cost-input {
+		width: 100%;
+		padding: 0.75rem;
+		border: 1px solid #ced4da;
+		border-radius: 4px;
+		font-family: 'Garet', sans-serif;
+		font-size: 0.95rem;
+	}
+
+	.save-changes-button {
+		width: 100%;
+		padding: 0.75rem 1.5rem;
+		background-color: #f9943b;
+		color: white;
+		border: none;
+		border-radius: 0.375rem;
+		font-weight: 600;
+		font-size: 1rem;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		font-family: 'Garet', sans-serif;
+		transition: all 0.2s ease;
+		margin-top: 1rem;
+	}
+
+	.save-changes-button:hover:not(:disabled) {
+		background-color: #e6831d;
+	}
+
+	.save-changes-button:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		filter: grayscale(50%);
 	}
 
 	/* Action Buttons Styling - Matching the create form buttons */
