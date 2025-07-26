@@ -1,9 +1,11 @@
 <script lang="ts">
 	import '../app.css';
-	import Nav from '$lib/components/nav/Nav.svelte';
-	let scrollContainer: HTMLElement | null = null;
-	const { children } = $props();
-	let open = $state(false);
+    import Nav from '$lib/components/nav/Nav.svelte';
+    import Footer from '$lib/components/footer/Footer.svelte';
+
+    let scrollContainer: HTMLElement | undefined = $state();
+    const { children } = $props();
+    let open = $state(false);
 </script>
 
 <svelte:head>
@@ -23,10 +25,9 @@
 	/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </svelte:head>
-<Nav container={scrollContainer} />
-<main
-	bind:this={scrollContainer}
-	class="bg-primary overflow-y h-[calc(100vh-56px)] snap-y snap-mandatory overflow-auto sm:h-[calc(100vh-80px)]"
->
-	{@render children()}
+<Nav scrollContainer={scrollContainer}/>
+<main bind:this={scrollContainer} class="bg-primary h-[calc(100vh-55px)] sm:h-[calc(100vh-80px)] overflow-y overflow-auto snap-y snap-mandatory">
+    {@render children()}
+    <Footer/>
 </main>
+
