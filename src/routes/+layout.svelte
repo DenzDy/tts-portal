@@ -1,18 +1,11 @@
 <script lang="ts">
 	import '../app.css';
 	import Nav from '$lib/components/nav/Nav.svelte';
-	import { page } from '$app/stores';
-	import { derived } from 'svelte/store';
+	import Footer from '$lib/components/footer/Footer.svelte';
 
-	let scrollContainer: HTMLElement | null = null;
+	let scrollContainer: HTMLElement | undefined = $state();
 	const { children } = $props();
 	let open = $state(false);
-
-	// Routes where the navbar should be shown
-	const showNavRoutes = ['/', '/reserve'];
-
-	// Reactive derived store to check if current path is in allowed list
-	const showNav = derived(page, ($page) => showNavRoutes.includes($page.url.pathname));
 </script>
 
 <svelte:head>
@@ -24,14 +17,11 @@
 	/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </svelte:head>
-
-{#if $showNav}
-	<Nav container={scrollContainer} />
-{/if}
-
+<Nav {scrollContainer} />
 <main
 	bind:this={scrollContainer}
-	class="bg-primary overflow-y h-[calc(100vh-56px)] snap-y snap-mandatory overflow-auto sm:h-[calc(100vh-80px)]"
+	class="bg-primary overflow-y h-[calc(100vh-55px)] snap-y snap-mandatory overflow-auto sm:h-[calc(100vh-80px)]"
 >
 	{@render children()}
+	<Footer />
 </main>

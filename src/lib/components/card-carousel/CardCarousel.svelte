@@ -47,7 +47,7 @@
 <div class="relative w-[90%] max-w-7xl mx-auto flex flex-row">
 	<!-- Left Arrow -->
 	<button
-		class="z-20 disabled:opacity-30"
+		class="z-2 disabled:opacity-30"
 		on:click={scrollLeft}
 		disabled={!canScrollLeft}
 	>
@@ -74,7 +74,7 @@
 
 	<!-- Right Arrow -->
 	<button
-		class="z-20 disabled:opacity-30"
+		class="z-2 disabled:opacity-30"
 		on:click={scrollRight}
 		disabled={!canScrollRight}
 	>
