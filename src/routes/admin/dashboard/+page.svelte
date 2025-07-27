@@ -110,11 +110,11 @@
 	});
 </script>
 
-<div class="header">
+<div class="header flex flex-col sm:header">
 	<h1>Admin Dashboard</h1>
 	<div class="user-info">
-		<button class="logout-btn" on:click={logout}>Logout</button>
-		<button class="back-home-btn" on:click={goHome}>Back to Home</button>
+		<button class="logout-btn text-[0.75rem] sm:logout-btn" on:click={logout}>Logout</button>
+		<button class="back-home-btn text-[0.75rem] sm:back-home-btn" on:click={goHome}>Back to Home</button>
 	</div>
 </div>
 
