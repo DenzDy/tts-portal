@@ -30,8 +30,10 @@
 
 <main
 	bind:this={scrollContainer}
-	class="bg-primary overflow-y h-[calc(100vh-55px)] snap-y snap-mandatory overflow-auto sm:h-[calc(100vh-80px)]"
+	class="bg-primary snap-y snap-mandatory flex flex-col justify-between"
 >
-	{@render children()}
+	<div class="">
+		{@render children()}
+	</div>
 	<Footer />
 </main>

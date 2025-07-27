@@ -57,7 +57,7 @@
 
 <div
 	id="hero"
-	class="bg-hero flex h-full w-full snap-start flex-col items-center justify-between bg-[rgba(255,255,255,0.4)] bg-size-[auto_100%] bg-center pt-10 bg-blend-lighten sm:bg-none!"
+	class="bg-hero flex h-[calc(100vh-55px)] sm:h-[calc(100vh-80px)] w-full snap-start flex-col items-center justify-between bg-[rgba(255,255,255,0.4)] bg-size-[auto_100%] bg-center pt-10 bg-blend-lighten sm:bg-none!"
 >
 	<div class="sm:flex sm:w-full sm:flex-row sm:items-center sm:gap-10 sm:px-10">
 		<img
