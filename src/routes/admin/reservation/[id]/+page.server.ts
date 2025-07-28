@@ -133,6 +133,23 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
       reservation[field.Name] = fieldValue || '';
     });
     
+    // EXPLICITLY MAP THE COST FIELDS
+    console.log('\n=== EXPLICIT COST FIELD MAPPING ===');
+    
+    // Find Cost Breakdown column (should be column B, index 1)
+    const costBreakdownIndex = headers.findIndex(h => h && h.toLowerCase().includes('cost breakdown'));
+    if (costBreakdownIndex !== -1) {
+      reservation['Cost Breakdown'] = reservationRow[costBreakdownIndex] || '';
+      console.log(`Cost Breakdown found at index ${costBreakdownIndex}:`, reservation['Cost Breakdown']);
+    }
+    
+    // Find Actual Total column (should be column E, index 4) 
+    const actualTotalIndex = headers.findIndex(h => h && h.toLowerCase().includes('actual total'));
+    if (actualTotalIndex !== -1) {
+      reservation['Actual Total'] = reservationRow[actualTotalIndex] || '';
+      console.log(`Actual Total found at index ${actualTotalIndex}:`, reservation['Actual Total']);
+    }
+    
     // Special handling for the extended columns
     console.log('\n=== EXTENDED COLUMNS CHECK ===');
     for (let i = 26; i < headers.length; i++) {
@@ -151,7 +168,9 @@ export const load: PageServerLoad = async ({ params, fetch, locals }) => {
     }
     
     console.log('Final reservation status:', reservation.status);
-    console.log('Final mapped reservation:', reservation);
+    console.log('Final Cost Breakdown:', reservation['Cost Breakdown']);
+    console.log('Final Actual Total:', reservation['Actual Total']);
+    console.log('Final mapped reservation keys:', Object.keys(reservation));
     
     return {
       reservation,
