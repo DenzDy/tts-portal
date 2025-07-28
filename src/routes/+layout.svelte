@@ -1,11 +1,17 @@
 <script lang="ts">
 	import '../app.css';
-    import Nav from '$lib/components/nav/Nav.svelte';
-    import Footer from '$lib/components/footer/Footer.svelte';
+	import Nav from '$lib/components/nav/Nav.svelte';
+	import Footer from '$lib/components/footer/Footer.svelte';
+	import { page } from '$app/stores';
+	import { derived } from 'svelte/store';
 
-    let scrollContainer: HTMLElement | undefined = $state();
-    const { children } = $props();
-    let open = $state(false);
+	let scrollContainer: HTMLElement | null = $state(null);
+	const { children } = $props();
+	let open = $state(false);
+
+	// Only show Nav on these routes
+	const showNavRoutes = ['/', '/about', '/dashboard']; // Adjust as needed
+	const showNav = derived(page, ($page) => showNavRoutes.includes($page.url.pathname));
 </script>
 
 <svelte:head>
@@ -15,19 +21,19 @@
 		href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
 		rel="stylesheet"
 	/>
-	<link
-		href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-		rel="stylesheet"
-	/>
-	<link
-		href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=League+Spartan:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-		rel="stylesheet"
-	/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </svelte:head>
-<Nav scrollContainer={scrollContainer}/>
-<main bind:this={scrollContainer} class="bg-primary h-[calc(100vh-55px)] sm:h-[calc(100vh-80px)] overflow-y overflow-auto snap-y snap-mandatory">
-    {@render children()}
-    <Footer/>
-</main>
 
+{#if $showNav}
+	<Nav {scrollContainer} />
+{/if}
+
+<main
+	bind:this={scrollContainer}
+	class="bg-primary snap-y snap-mandatory flex flex-col justify-between"
+>
+	<div class="">
+		{@render children()}
+	</div>
+	<Footer />
+</main>

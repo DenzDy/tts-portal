@@ -42,9 +42,11 @@ export async function GET({ url }) {
     const safeTab = targetTab.replace(/'/g, ''); // remove extra quotes
 	const sheets = await getSheetsClient();
 
+	// Extended range to include columns beyond Z (up to AZ for safety)
+	// This will fetch columns A through AZ (up to column 52)
 	const res = await sheets.spreadsheets.values.get({
 		spreadsheetId,
-		range: `'${safeTab}'!A1:Z1000`
+		range: `'${safeTab}'!A1:AZ1000`
 	});
 
 	return json(res.data.values || []);
