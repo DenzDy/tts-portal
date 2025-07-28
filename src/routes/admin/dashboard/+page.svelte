@@ -33,10 +33,6 @@
 	}
 
 	async function updateStatus(res, newStatus) {
-		console.log('=== BUTTON CLICKED ===');
-		console.log('Full object:', res);
-		console.log('rowIndex:', res.rowIndex);
-
 		// Use a fallback rowIndex calculation if it's still undefined
 		let actualRowIndex = res.rowIndex;
 		if (!actualRowIndex) {
@@ -45,7 +41,6 @@
 				(r) => r.activity === res.activity && r.status === res.status
 			);
 			actualRowIndex = arrayIndex + 2;
-			console.log('Calculated fallback rowIndex:', actualRowIndex);
 		}
 
 		if (!actualRowIndex || actualRowIndex < 2) {
@@ -62,8 +57,6 @@
 				newStatus: newStatus,
 				fromDashboard: true // Flag to indicate this is from dashboard
 			};
-
-			console.log('Sending:', requestData);
 
 			const response = await fetch('/api/gsheet/update-status', {
 				method: 'PATCH',
@@ -111,11 +104,13 @@
 	});
 </script>
 
-<div class="header flex flex-col sm:header">
+<div class="header sm:header flex flex-col">
 	<h1>Admin Dashboard</h1>
 	<div class="user-info">
-		<button class="logout-btn text-[0.75rem] sm:logout-btn" on:click={logout}>Logout</button>
-		<button class="back-home-btn text-[0.75rem] sm:back-home-btn" on:click={goHome}>Back to Home</button>
+		<button class="logout-btn sm:logout-btn text-[0.75rem]" on:click={logout}>Logout</button>
+		<button class="back-home-btn sm:back-home-btn text-[0.75rem]" on:click={goHome}
+			>Back to Home</button
+		>
 	</div>
 </div>
 
@@ -255,16 +250,16 @@
 
 	.dashboard-container::-webkit-scrollbar {
 		width: 12px;
-		display: block;  
+		display: block;
 	}
 
 	.dashboard-container::-webkit-scrollbar-track {
-		background: #f1f1f1; 
+		background: #f1f1f1;
 	}
 
 	.dashboard-container::-webkit-scrollbar-thumb {
 		background: #c1c1c1;
-		border-radius: 6px; 
+		border-radius: 6px;
 	}
 
 	.search-bar {
@@ -372,7 +367,7 @@
 		background: #a8a8a8;
 	}
 
-  :global(main) {
+	:global(main) {
 		margin: 0 !important;
 		padding: 0 !important;
 		background-color: #f8f9f0 !important;

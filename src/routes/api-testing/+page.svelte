@@ -2,7 +2,6 @@
 	export let data;
 	const { values = [], responsesTab = '' } = data;
 	async function writeToSheet() {
-		console.log('writing to sheet');
 		const res = await fetch('/api/gsheet', {
 			method: 'POST',
 			headers: {

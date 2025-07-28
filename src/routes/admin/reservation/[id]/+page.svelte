@@ -3,32 +3,36 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	
+
 	const { reservation, formFields, adminSession, reservationId } = data;
 
 	let classes = {
 		divClasses: ['my-4'],
 		labelClasses: ['font-bold', 'text-md'],
 		helperClasses: ['text-gray-500', 'italic', 'text-sm', 'my-1'],
-		inputClasses: ['my-2', 'rounded-md', 'border-blue', 'w-full', 'bg-gray-100', 'cursor-not-allowed'],
+		inputClasses: [
+			'my-2',
+			'rounded-md',
+			'border-blue',
+			'w-full',
+			'bg-gray-100',
+			'cursor-not-allowed'
+		],
 		errorClasses: ['text-red-500', 'italic', 'text-sm']
 	};
 
 	// Generate form fields with reservation data
 	let renderedFields = formFields?.map((def) => {
 		const fieldConfig = generateFormFields(def, classes);
-		
+
 		// Get the value from reservation data
 		let fieldValue = reservation[def.Name] || '';
-		
-		// Debug logging
-		console.log(`Field: ${def.Name}, Label: ${def.Label}, Value: "${fieldValue}"`);
-		
+
 		// Handle different field types for display
 		if (def.Type === 'checkbox' && typeof fieldValue === 'string') {
 			fieldValue = fieldValue ? fieldValue.split('; ') : [];
 		}
-		
+
 		return {
 			name: def.Name,
 			label: def.Label,
@@ -40,18 +44,15 @@
 
 	// Get the correct status - use reservation.status which we set correctly in the server
 	$: currentStatus = reservation.status || reservation['Approved?'] || 'Pending';
-	
-	console.log('Current status in component:', currentStatus);
-	console.log('Full reservation data:', reservation);
 
 	// Helper function to format values for display
 	function formatValue(value: any, type: string): string {
 		if (!value) return 'N/A';
-		
+
 		if (Array.isArray(value)) {
 			return value.join(', ');
 		}
-		
+
 		if (type === 'date' && value) {
 			try {
 				const date = new Date(value);
@@ -60,29 +61,27 @@
 				return value.toString();
 			}
 		}
-		
+
 		return value.toString();
 	}
 
 	// Helper function to check if "Others" option is selected in equipment to rent
 	function hasOthersSelected(equipmentRentValue: any): boolean {
 		if (!equipmentRentValue) return false;
-		
+
 		if (Array.isArray(equipmentRentValue)) {
-			return equipmentRentValue.some(item => 
-				item && item.toLowerCase().includes('others')
-			);
+			return equipmentRentValue.some((item) => item && item.toLowerCase().includes('others'));
 		}
-		
+
 		if (typeof equipmentRentValue === 'string') {
 			return equipmentRentValue.toLowerCase().includes('others');
 		}
-		
+
 		return false;
 	}
 
 	// Get the equipment rent field value for checking "Others"
-	$: equipmentRentField = renderedFields?.find(field => field.name === 'equipmentRent');
+	$: equipmentRentField = renderedFields?.find((field) => field.name === 'equipmentRent');
 	$: showOthersField = equipmentRentField ? hasOthersSelected(equipmentRentField.value) : false;
 
 	// Loading states for buttons
@@ -94,25 +93,16 @@
 	let costBreakdown = reservation['Cost Breakdown'] || '';
 	let actualTotal = parseFloat(reservation['Actual Total']) || 0;
 
-	// Debug logging stuff
-	console.log('=== COST FIELD INITIALIZATION ===');
-	console.log('reservation[Cost Breakdown]:', reservation['Cost Breakdown']);
-	console.log('reservation[Actual Total]:', reservation['Actual Total']);
-	console.log('costBreakdown variable:', costBreakdown);
-	console.log('actualTotal variable:', actualTotal);
-
 	// Function to save cost changes
 	async function saveCostChanges() {
 		savingCosts = true;
 
 		try {
-			const requestData = { 
+			const requestData = {
 				rowIndex: parseInt(reservationId),
 				costBreakdown: costBreakdown,
-				actualTotal: parseFloat(actualTotal) || 0
+				actualTotal: actualTotal
 			};
-			
-			console.log('Sending cost update:', requestData);
 
 			const response = await fetch('/api/gsheet/update-cost', {
 				method: 'PATCH',
@@ -146,7 +136,9 @@
 			rejectingReservation = true;
 		}
 
-		const confirmed = confirm(`Are you sure you want to change this reservation's status to ${newStatus.toLowerCase()}?`);
+		const confirmed = confirm(
+			`Are you sure you want to change this reservation's status to ${newStatus.toLowerCase()}?`
+		);
 		if (!confirmed) {
 			approvingReservation = false;
 			rejectingReservation = false;
@@ -154,13 +146,11 @@
 		}
 
 		try {
-			const requestData = { 
+			const requestData = {
 				rowIndex: parseInt(reservationId),
 				newStatus: newStatus,
 				fromDashboard: false // Flag to indicate this is from details page
 			};
-			
-			console.log('Sending status update:', requestData);
 
 			const response = await fetch('/api/gsheet/update-status', {
 				method: 'PATCH',
@@ -174,7 +164,7 @@
 				// Update the current status
 				reservation.status = newStatus;
 				alert(`Reservation ${newStatus.toLowerCase()} successfully!`);
-				
+
 				// Optionally redirect back to dashboard after a short delay
 				// setTimeout(() => {
 				//	 window.location.href = '/admin/dashboard';
@@ -195,21 +185,22 @@
 <div class="header">
 	<h1>View Reservation Details</h1>
 	<div class="user-info">
-		<!-- <img src={adminSession?.picture} alt="Profile" class="profile-pic" /> -->
-		<!-- <span class="user-email">{adminSession?.email}</span> -->
 		<a href="/admin/dashboard" class="back-btn">Back to Dashboard</a>
 	</div>
 </div>
 
 <div class="mx-auto my-8 w-5/6 md:w-1/2">
-	<h2 class="text-center text-3xl font-bold mb-4">Reservation #{reservationId - 1}</h2>
-	
+	<h2 class="mb-4 text-center text-3xl font-bold">Reservation #{reservationId - 1}</h2>
+
 	<!-- Status Badge -->
-	<div class="text-center mb-6">
-		<span class={
-			currentStatus === 'Approved' ? 'status-badge approved' :
-			currentStatus === 'Rejected' ? 'status-badge rejected' : 'status-badge pending'
-		}>
+	<div class="mb-6 text-center">
+		<span
+			class={currentStatus === 'Approved'
+				? 'status-badge approved'
+				: currentStatus === 'Rejected'
+					? 'status-badge rejected'
+					: 'status-badge pending'}
+		>
 			{currentStatus}
 		</span>
 	</div>
@@ -221,10 +212,10 @@
 		{#each renderedFields as field (field.name)}
 			{#if !field.name.includes('Others')}
 				<div class="field-container">
-					<label class="field-label">
+					<label for="field-label" class="field-label">
 						{field.label}
 					</label>
-					
+
 					{#if field.type === 'textarea'}
 						<div class="field-value textarea-value">
 							{formatValue(field.value, field.type)}
@@ -236,9 +227,7 @@
 					{:else if field.type === 'upload'}
 						<div class="field-value">
 							{#if field.value}
-								<a href={field.value} target="_blank" class="file-link">
-									View Uploaded File
-								</a>
+								<a href={field.value} target="_blank" class="file-link"> View Uploaded File </a>
 							{:else}
 								No file uploaded
 							{/if}
@@ -248,7 +237,7 @@
 							{formatValue(field.value, field.type)}
 						</div>
 					{/if}
-					
+
 					<!-- Show helper text if available -->
 					{#if field.props?.helper}
 						<p class="field-helper">{@html field.props.helper}</p>
@@ -258,7 +247,7 @@
 				<!-- Show "Other Equipment to Rent" field right after "Equipment to Rent" if Others is selected -->
 				{#if field.name === 'equipmentRent' && showOthersField}
 					<div class="field-container others-field">
-						<label class="field-label">
+						<label for="dashboard-other-equipment" class="field-label">
 							Other Equipment to Rent (Specify)
 						</label>
 						<div class="field-value">
@@ -276,26 +265,20 @@
 	<!-- Cost Fields Section -->
 	<div class="cost-fields-section">
 		<h3 class="cost-section-title">Cost Information</h3>
-		
+
 		<div class="field-container">
-			<label class="field-label">
-				Cost Breakdown
-			</label>
+			<label for="dashboard-cost-breakdown" class="field-label"> Cost Breakdown </label>
 			<textarea
 				bind:value={costBreakdown}
 				placeholder="Enter cost breakdown (e.g., Projector: 100&#10;Chairs: 50&#10;Setup fee: 25)"
 				class="cost-textarea"
 				rows="4"
 			></textarea>
-			<p class="field-helper">
-				Enter each item on a new line in the format "Item: Cost"
-			</p>
+			<p class="field-helper">Enter each item on a new line in the format "Item: Cost"</p>
 		</div>
 
 		<div class="field-container">
-			<label class="field-label">
-				Actual Total (₱)
-			</label>
+			<label for="dashboard-actual-total" class="field-label"> Actual Total (₱) </label>
 			<input
 				type="number"
 				bind:value={actualTotal}
@@ -304,16 +287,10 @@
 				min="0"
 				step="0.01"
 			/>
-			<p class="field-helper">
-				Total amount to be paid by the user
-			</p>
+			<p class="field-helper">Total amount to be paid by the user</p>
 		</div>
 
-		<button 
-			class="save-changes-button" 
-			on:click={saveCostChanges}
-			disabled={savingCosts}
-		>
+		<button class="save-changes-button" on:click={saveCostChanges} disabled={savingCosts}>
 			{#if savingCosts}
 				<span class="loader save-loader"></span>
 				Saving Changes...
@@ -322,12 +299,12 @@
 			{/if}
 		</button>
 	</div>
-	
+
 	<!-- Action Buttons Section - Only show if status is Pending -->
 	{#if currentStatus === 'Pending'}
 		<div class="my-4 flex w-full gap-2">
-			<button 
-				class="action-button approve-button w-1/2" 
+			<button
+				class="action-button approve-button w-1/2"
 				on:click={() => updateReservationStatus('Approved')}
 				disabled={approvingReservation || rejectingReservation}
 			>
@@ -338,8 +315,8 @@
 					Approve
 				{/if}
 			</button>
-			<button 
-				class="action-button reject-button w-1/2" 
+			<button
+				class="action-button reject-button w-1/2"
 				on:click={() => updateReservationStatus('Rejected')}
 				disabled={approvingReservation || rejectingReservation}
 			>
@@ -353,7 +330,7 @@
 		</div>
 	{:else}
 		<!-- Show status message when not pending -->
-		<div class="text-center mt-8">
+		<div class="mt-8 text-center">
 			<p class="status-message">
 				This reservation has already been <strong>{currentStatus.toLowerCase()}</strong>.
 			</p>
@@ -369,7 +346,7 @@
 		align-items: center;
 		padding: 1rem 2rem;
 		background: white;
-		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		margin-bottom: 2rem;
 	}
 
@@ -627,8 +604,12 @@
 	}
 
 	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 
 	/* Status message styling */
@@ -656,5 +637,5 @@
 		background-color: #f8f9f0 !important;
 		min-height: 100vh !important;
 		height: auto !important;
-	}	
+	}
 </style>
