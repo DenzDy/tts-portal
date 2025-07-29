@@ -12,38 +12,20 @@
 	import desktopHero from '$lib/static/images/hero-unedited.png';
 	import newspaperTTS from '$lib/static/images/newspaper-tts.png';
 
-	const events = [
-		{
-			image: anniv,
-			headerText: 'The Third Space Anniversary',
-			date: 'April 11, 2024',
-			description: 'Lorem ipsum.'
-		},
-		{
-			image: anniv,
-			headerText: 'The Third Space Anniversary',
-			date: 'April 12, 2024',
-			description: 'Lorem ipsum.'
-		},
-		{
-			image: anniv,
-			headerText: 'The Third Space Anniversary',
-			date: 'April 13, 2024',
-			description: 'Lorem ipsum.'
-		},
-		{
-			image: anniv,
-			headerText: 'The Third Space Anniversary',
-			date: 'April 14, 2024',
-			description: 'Lorem ipsum.'
-		},
-		{
-			image: anniv,
-			headerText: 'The Third Space Anniversary',
-			date: 'April 15, 2024',
-			description: 'Lorem ipsum.'
-		}
-	];
+	type landingPage = {
+		heroPg: string;
+		aboutHeader: string;
+		aboutPg: string;
+		zonesHeader: string;
+		eventsHeader: string;
+		contactHeader: string;
+	}
+
+	export let data: {
+		eventData : Object[],
+		landingPageData : landingPage
+	};
+	
 	let windowWidth = 0;
 	onMount(() => {
 		windowWidth = window.innerWidth;
@@ -77,8 +59,7 @@
 			id="hero-text"
 			class="w-full p-5 text-center font-[Montserrat] text-xl font-medium text-wrap text-black sm:text-start"
 		>
-			a place where people spend their time between their first place (home) and second place (work
-			or school)
+			{data.landingPageData.heroPg}
 		</p>
 	</div>
 	<ChevronDown class="sm:hidden" />
@@ -96,35 +77,27 @@
 	class="mt-8 mb-10 flex w-full snap-start flex-col items-center gap-7 px-3 pt-3 sm:flex sm:flex-row sm:gap-16"
 >
 	<h1 class="text-primary text-center font-[League_Spartan] text-[3rem]/10 font-semibold sm:hidden">
-		about the third space.
+		{data.landingPageData.aboutHeader}
 	</h1>
 	<img src={newspaperTTS} alt="" srcset="" class="w-[80%] sm:w-[40%]" />
 	<p class="mb-3 text-center font-[Garet] text-xs/6 font-bold text-black sm:hidden">
-		The Third Space is a holistic, air-conditioned co-working space where students of the University
-		of the Philippines can study for examinations or research, mingle with friends, collaborate with
-		peers, and participate in various wellness initiatives. It aims to improve the overall
-		well-being of students through activities that will restore their appreciation for discovert,
-		collaborative learning, and community-building.
+		{data.landingPageData.aboutPg}
 	</p>
 	<div class="hidden w-[50%] sm:flex sm:flex-col sm:gap-16">
 		<h1 class="text-primary font-[League_Spartan] text-[3rem]/16 font-semibold sm:text-[4rem]">
-			about the third space.
+			{data.landingPageData.aboutHeader}
 		</h1>
 		<p
 			class="mb-3 text-center font-[Garet] text-xs/6 font-bold text-black sm:text-start sm:text-xl/12"
 		>
-			The Third Space is a holistic, air-conditioned co-working space where students of the
-			University of the Philippines can study for examinations or research, mingle with friends,
-			collaborate with peers, and participate in various wellness initiatives. It aims to improve
-			the overall well-being of students through activities that will restore their appreciation for
-			discovert, collaborative learning, and community-building.
+		{data.landingPageData.aboutPg}
 		</p>
 	</div>
 </div>
 <div id="zones" class="snap-start w-full mt-8 pt-3 flex flex-col items-center gap-7 px-3 sm:px-8 sm:py-8">
-    <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary sm:text-[4rem] font-semibold">the three zones.</h1>
+    <h1 class="font-[League_Spartan] text-[3rem]/10 text-center text-primary sm:text-[4rem] font-semibold">{data.landingPageData.zonesHeader}</h1>
     <div class="flex flex-col items-center gap-7 sm:flex sm:flex-row sm:w-full sm:justify-evenly sm:gap-2 sm:items-start">
-        <ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
+		<ZoneCard zoneName="orange" zoneColor="orange" zoneDescription="reading, research, and study space."/>
         <ZoneCard zoneName="blue" zoneColor="blue" zoneDescription="interaction of peers and friends — mindful conversations and discussions"/>
         <ZoneCard zoneName="green" zoneColor="green" zoneDescription="different wellness activities and learning opportunities"/>    
     </div>
@@ -137,10 +110,10 @@
 	<h1
 		class="text-primary text-center font-[League_Spartan] text-[3rem]/10 font-semibold sm:text-[4rem]"
 	>
-		recent events.
+		{data.landingPageData.eventsHeader}
 	</h1>
 	{#if browser}
-		<CardCarousel {events} />
+		<CardCarousel events={ data.eventData } />
 	{/if}
 </div>
 <div
@@ -150,7 +123,7 @@
 	<h1
 		class="text-primary text-center font-[League_Spartan] text-[3rem]/10 font-semibold sm:text-[4rem]"
 	>
-		contact us.
+		{data.landingPageData.contactHeader}
 	</h1>
 	<div class="flex w-full justify-center">
 		<div class="flex flex-row justify-center gap-10">

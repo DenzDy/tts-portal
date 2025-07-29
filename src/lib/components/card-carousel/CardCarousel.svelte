@@ -2,12 +2,18 @@
 	import { onMount } from 'svelte';
 	import EventCard from '$lib/components/event-card/EventCard.svelte';
     import { ChevronLeft, ChevronRight } from 'lucide-svelte';
-	export let events = [];
+	type EventType = {
+		eventname: string;
+		eventdescription: string;
+		eventdate: string;
+		eventimagelink: string;
+	};
+	export let events : EventType[];
 
 	let carousel: HTMLDivElement;
 	let canScrollLeft = false;
 	let canScrollRight = false;
-
+	console.log(typeof events[0].eventimagelink);
 	function updateScrollState() {
 		if (!carousel) return;
 
